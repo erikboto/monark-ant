@@ -25,10 +25,17 @@
 #endif
 #include "LibUsb.h"
 
-#define OperatingSystem 0
-#define WINDOWS 1
 #define LINUX 0
+#define WINDOWS 1
 #define OSX 2
+
+#ifdef Q_OS_MAC
+#define OperatingSystem 2
+#elif defined Q_OS_WIN32
+#define OperatingSystem 1
+#elif defined Q_OS_LINUX
+#define OperatingSystem 0
+#endif
 
 LibUsb::LibUsb(int type) : type(type)
 {
@@ -159,7 +166,6 @@ int LibUsb::read(char *buf, int bytes)
 
 int LibUsb::write(char *buf, int bytes)
 {
-
     // check it isn't closed
     if (!device) return -1;
 

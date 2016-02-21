@@ -6,8 +6,17 @@
 
 QT       += core gui serialport
 
-CONFIG += link_pkgconfig
-PKGCONFIG += libusb
+unix {
+    CONFIG += link_pkgconfig
+    PKGCONFIG += libusb
+}
+
+win32 {
+    LIBUSB_INSTALL = ""
+    LIBUSB_LIBS = -L$${LIBUSB_INSTALL}/lib/gcc -lusb
+    INCLUDEPATH += $${LIBUSB_INSTALL}/include
+    LIBS        += $${LIBUSB_LIBS}
+}
 
 CONFIG += c++11
 
