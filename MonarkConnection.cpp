@@ -291,7 +291,7 @@ bool MonarkConnection::discover(QString portName)
 void MonarkConnection::identifySerialPort()
 {
     qDebug() << __func__;
-    bool found;
+    bool found = false;
     do {
         QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
         foreach (QSerialPortInfo port, ports)
