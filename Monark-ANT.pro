@@ -32,11 +32,15 @@ SOURCES += main.cpp\
     powerdevice.cpp \
     LibUsb.cpp \
     antmessage.cpp \
-    ant.cpp
+    ant.cpp \
+    fecdevice.cpp \
+    antdevice.cpp
 
 HEADERS  += mainwindow.h \
     MonarkConnection.h \
     powerdevice.h \
     LibUsb.h \
     antmessage.h \
-    ant.h
+    ant.h \
+    fecdevice.h \
+    antdevice.h

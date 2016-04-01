@@ -6,6 +6,8 @@
 #include "antmessage.h"
 
 #include "powerdevice.h"
+#include "fecdevice.h"
+#include <QMap>
 
 class ANT : public QThread
 {
@@ -20,7 +22,8 @@ public slots:
 private:
     void run();
     LibUsb *m_usb;
-    PowerDevice *m_pd;
+    //PowerDevice *m_pd;
+    QMap<int, ANTDevice*> m_devices;
 
     // state machine whilst receiving bytes
     enum States {ST_WAIT_FOR_SYNC, ST_GET_LENGTH, ST_GET_MESSAGE_ID, ST_GET_DATA, ST_VALIDATE_PACKET} m_state;
@@ -34,6 +37,10 @@ private:
     int length;
     int bytes;
     int checksum;
+
+signals:
+    void newTargetPower(quint32 targetPower);
+
 };
 
 #endif // ANT_H

@@ -15,6 +15,7 @@ PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, QObject *par
 void PowerDevice::channelEvent(unsigned char *ant_message)
 {
 
+    qDebug() << "PowerDevice::channelEvent";
     // byte 0 sync
     // byte 1 len
     // byte 2 type (channel event 0x40 if we get it here)

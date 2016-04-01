@@ -15,7 +15,11 @@ void ANT::run()
 {
 
     m_usb = new LibUsb(TYPE_ANT);
-    m_pd = new PowerDevice(m_usb,1);
+    m_devices[1] = new PowerDevice(m_usb,1);
+    m_devices[2] = new FECDevice(m_usb,2);
+
+    FECDevice * foo = static_cast<FECDevice*>(m_devices[2]);
+    connect(foo, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
 
     qDebug() << "Starting ANT thread";
     qDebug() << "Found stick? "  << m_usb->find();
@@ -29,7 +33,10 @@ void ANT::run()
 
     msleep(100);
 
-    m_pd->configureChannel();
+    foreach (ANTDevice* antdev, m_devices)
+    {
+        antdev->configureChannel();
+    }
 
     while(1)
     {
@@ -154,7 +161,10 @@ void ANT::receiveChannelMessage(unsigned char *ant_message)
 {
     switch (ant_message[2]) {
     case ANT_CHANNEL_EVENT:
-        m_pd->channelEvent(ant_message);
+        if (m_devices.contains(ant_message[3]))
+        {
+            m_devices[ant_message[3]]->channelEvent(ant_message);
+        }
         break;
     case ANT_BROADCAST_DATA:
         //broadcastEvent(ant_message);
@@ -163,7 +173,10 @@ void ANT::receiveChannelMessage(unsigned char *ant_message)
     case ANT_ACK_DATA:
         //ackEvent(ant_message);
         qDebug()<<"Channel ack data";
-        m_pd->handleAckData(ant_message);
+        if (m_devices.contains(ant_message[3]))
+        {
+            m_devices[ant_message[3]]->handleAckData(ant_message);
+        }
 
         break;
     case ANT_CHANNEL_ID:
@@ -182,16 +195,16 @@ void ANT::receiveChannelMessage(unsigned char *ant_message)
 
 void ANT::setCurrentPower(quint16 power)
 {
-    if (m_pd)
+    foreach (ANTDevice* antdev, m_devices)
     {
-        m_pd->setCurrentPower(power);
+        antdev->setCurrentPower(power);
     }
 }
 
 void ANT::setCurrentCadence(quint8 cadence)
 {
-    if (m_pd)
+    foreach (ANTDevice* antdev, m_devices)
     {
-        m_pd->setCurrentCadence(cadence);
+        antdev->setCurrentCadence(cadence);
     }
 }

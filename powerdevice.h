@@ -3,10 +3,11 @@
 
 #include <QObject>
 #include "antmessage.h"
+#include "antdevice.h"
 
 class LibUsb;
 
-class PowerDevice : public QObject
+class PowerDevice :  public QObject, public ANTDevice
 {
     Q_OBJECT
 public:
@@ -20,6 +21,7 @@ public:
     void configureChannel();
 
     void handleAckData(unsigned char *ant_message);
+    int channel() const {return m_channel;}
 signals:
 
 public slots:

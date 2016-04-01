@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     QObject::connect(monark, SIGNAL(cadence(quint8)), ant, SLOT(setCurrentCadence(quint8)));
     QObject::connect(&w, SIGNAL(currentLoadChanged(quint32)), monark, SLOT(setLoad(uint)));
     QObject::connect(monark, SIGNAL(connectionStatus(bool)), &w, SLOT(onConnectionStatusChanged(bool)));
+    QObject::connect(ant, SIGNAL(newTargetPower(quint32)), &w, SLOT(setCurrentLoad(quint32)));
 
     monark->start();
     ant->start();
