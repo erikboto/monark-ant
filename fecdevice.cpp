@@ -14,7 +14,7 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, QObject *parent) 
     m_currLapMarkerHigh(false),
     m_state(State::Ready),
     m_channel(channel),
-    m_currPower(313),
+    m_currPower(0),
     m_targetPower(0),
     m_cadence(0),
     m_heartRate(0),
@@ -33,8 +33,9 @@ ANTMessage FECDevice::fecPage16(bool toggleLap)
     const unsigned char distance = 0xFF; // not used due to our capabilities field, value doesn't matter
     const unsigned char speedMSB = 0xFF; // set to invalid, not required value
     const unsigned char speedLSB = 0xFF; // set to invalid, not required value
+    const unsigned char heartRate = 0xFF; // set to invalid, not required value
 
-    const unsigned char capabilities = 0x1; // Bit 0-3 ANT+ HR, No distance or speed
+    const unsigned char capabilities = 0x0; // Bit 0-3 No HR source, No distance or speed
 
     if (toggleLap)
     {
@@ -51,7 +52,7 @@ ANTMessage FECDevice::fecPage16(bool toggleLap)
 
     const unsigned char caps_and_state = ( ((((unsigned char)m_state) << 4) | lap) & FEC_STATE_MASK) | (capabilities & FEC_CAPS_MASK);
 
-    return ANTMessage(9, ANT_BROADCAST_DATA, m_channel, page, eqType, time, distance, speedLSB, speedMSB, m_heartRate, caps_and_state);
+    return ANTMessage(9, ANT_BROADCAST_DATA, m_channel, page, eqType, time, distance, speedLSB, speedMSB, heartRate, caps_and_state);
 }
 
 ANTMessage FECDevice::fecPage17(bool toggleLap)
@@ -214,9 +215,6 @@ void FECDevice::setTargetPower(quint32 targetPower)
 
 void FECDevice::channelEvent(unsigned char *ant_message)
 {
-
-    qDebug() << "FECDevice::channelEvent";
-
     // byte 0 sync
     // byte 1 len
     // byte 2 type (channel event 0x40 if we get it here)
@@ -264,6 +262,9 @@ void FECDevice::channelEvent(unsigned char *ant_message)
         break;
     case EVENT_TRANSFER_TX_COMPLETED:
         qDebug() << "FECDevice::channelEvent" << "EVENT_TRANSFER_TX_COMPLETED";
+        break;
+    case EVENT_CHANNEL_COLLISION:
+        qDebug() << "FECDevice::channelEvent" << "EVENT_CHANNEL_COLLISION";
         break;
     default:
         // There's a lot not handled yet here

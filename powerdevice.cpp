@@ -6,16 +6,14 @@
 PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, QObject *parent) : QObject(parent),
     m_usb(usb),
     m_channel(channel),
-    m_power(234),
-    m_cadence(71)
+    m_power(0),
+    m_cadence(0)
 {
 
 }
 
 void PowerDevice::channelEvent(unsigned char *ant_message)
 {
-
-    qDebug() << "PowerDevice::channelEvent";
     // byte 0 sync
     // byte 1 len
     // byte 2 type (channel event 0x40 if we get it here)
@@ -63,6 +61,9 @@ void PowerDevice::channelEvent(unsigned char *ant_message)
         break;
     case EVENT_TRANSFER_TX_COMPLETED:
         qDebug() << "PowerDevice::channelEvent" << "EVENT_TRANSFER_TX_COMPLETED";
+        break;
+    case EVENT_CHANNEL_COLLISION:
+        qDebug() << "PowerDevice::channelEvent" << "EVENT_CHANNEL_COLLISION";
         break;
     default:
         // There's a lot not handled yet here
@@ -175,15 +176,16 @@ void PowerDevice::handleAckData(unsigned char *ant_message)
     }
 
     switch (ant_message[4]) {
-    case 0x31: // power
+    case 0x01: // calibration
         {
-            //unsigned char * ant_sport_mess = ant_message+4;
-            //setTargetPower(powerFromFecPage49(ant_sport_mess));
+            ANTMessage m = page01();
+            m_usb->write((char*)m.data, m.length);
         }
         break;
-    case 0x46: // Request for a special page, we should only get req for page 54
+
+    case 0x46: // Request for a special page, should not be needed.
     {
-        unsigned char * ant_sport_mess = ant_message+4;
+        //unsigned char * ant_sport_mess = ant_message+4;
         //handlePageRequest(ant_sport_mess);
         break;
     }

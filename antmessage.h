@@ -12,6 +12,7 @@
 #define EVENT_TRANSFER_TX_COMPLETED     5
 #define EVENT_TRANSFER_TX_FAILED        6
 #define EVENT_CHANNEL_CLOSED            7
+#define EVENT_CHANNEL_COLLISION         9
 #define EVENT_RX_BROADCAST             10
 #define EVENT_RX_ACKNOWLEDGED          11
 #define EVENT_RX_BURST_PACKET          12
