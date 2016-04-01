@@ -28,7 +28,7 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, QObject *parent) 
     m_currLapMarkerHigh(false),
     m_state(State::Ready),
     m_channel(channel),
-    m_currPower(0),
+    m_currPower(100),
     m_targetPower(0),
     m_cadence(0),
     m_heartRate(0),

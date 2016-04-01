@@ -23,7 +23,7 @@
 PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, QObject *parent) : QObject(parent),
     m_usb(usb),
     m_channel(channel),
-    m_power(0),
+    m_power(90),
     m_cadence(0)
 {
 

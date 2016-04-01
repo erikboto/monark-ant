@@ -40,6 +40,10 @@ void ANT::run()
     connect(foo, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
 
     qDebug() << "Starting ANT thread";
+    while (!m_usb->find())
+    {
+        msleep(500);
+    }
     qDebug() << "Found stick? "  << m_usb->find();
     qDebug() << "Open stick? " << m_usb->open();
 
