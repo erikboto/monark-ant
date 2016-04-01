@@ -1,3 +1,23 @@
+/*
+ * Copyright (c) 2011 Mark Liversedge (liversedge@gmail.com)
+ * Copyright (c) 2009 Mark Rages (Quarq)
+ * Copyright (c) 2016 Erik Botö (erik.boto@gmail.com)
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc., 51
+ * Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #include "antmessage.h"
 
 #include <QDebug>
@@ -101,60 +121,4 @@ ANTMessage ANTMessage::setChannelFreq(const unsigned char channel,
 ANTMessage ANTMessage::open(const unsigned char channel)
 {
     return ANTMessage(1, ANT_OPEN_CHANNEL, channel);
-}
-
-ANTMessage ANTMessage::hrmData(const unsigned char channel, const unsigned char hr)
-{
-
-//    channel = message[3];
-//    measurementTime = message[8] + (message[9]<<8);
-//    heartrateBeats =  message[10];
-//    instantHeartrate = message[11];
-    // heartrate     heart_rate          0x4e,channel,None,None,None,None,uint16_le_diff:measurement_time,
-    //                                                                    uint8_diff:beats,uint8:instant_heart_rate
-    static unsigned char specialpagenr = 2;
-    static int count = 0;
-    static unsigned char togglebit = 0;
-    static unsigned char hrcount = 0;
-
-    static uint16_t time = 0;
-
-    ANTMessage m;
-
-    qDebug() << "count: " << count;
-
-    bool specialpage = ((count%65)==0);
-
-    if (count++%4 == 0)
-        togglebit ^= 0x80;
-    else
-        togglebit ^= 0x0;
-
-    if (!specialpage)
-    {
-        m = ANTMessage(9, ANT_BROADCAST_DATA, channel,  togglebit, 0xff,0xff,0xff, (time & 0xFF), (time & 0xFF00) >> 8, hrcount += (1) , hr+(count%4));
-    }
-    else
-    {
-        switch (specialpagenr)
-        {
-        case 1:
-            // dont implement
-            break;
-        case 2:
-            // page2
-            specialpagenr++;
-            m = ANTMessage(9, ANT_BROADCAST_DATA,channel,  togglebit | 0x02, 0x06,0x06,0x06, (time & 0xFF), (time & 0xFF00) >> 8, hrcount += (1) , hr);
-            break;
-        case 3:
-            //page3
-            specialpagenr=2;
-            m = ANTMessage(9, ANT_BROADCAST_DATA,channel,  togglebit | 0x03, 0x07,0x07,0x07, (time & 0xFF), (time & 0xFF00) >> 8, hrcount += (1) , hr);
-            break;
-        }
-    }
-
-    time += 100;
-
-    return m;
 }
