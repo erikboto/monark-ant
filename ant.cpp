@@ -33,18 +33,21 @@ void ANT::run()
 {
 
     m_usb = new LibUsb(TYPE_ANT);
+#ifndef DISABLE_ANT_POWER
     m_devices[1] = new PowerDevice(m_usb,1);
+#endif
+#ifndef DISABLE_ANT_FEC
     m_devices[2] = new FECDevice(m_usb,2);
-
-    FECDevice * foo = static_cast<FECDevice*>(m_devices[2]);
-    connect(foo, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
+    FECDevice * fecDevice = static_cast<FECDevice*>(m_devices[2]);
+    connect(fecDevice, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
+#endif
 
     qDebug() << "Starting ANT thread";
     while (!m_usb->find())
     {
         msleep(500);
     }
-    qDebug() << "Found stick? "  << m_usb->find();
+
     qDebug() << "Open stick? " << m_usb->open();
 
     const unsigned char key[8] = { 0xB9, 0xA5, 0x21, 0xFB, 0xBD, 0x72, 0xC3, 0x45 };

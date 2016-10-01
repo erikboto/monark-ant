@@ -1,10 +1,4 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-02-19T18:02:08
-#
-#-------------------------------------------------
-
-QT       += core gui serialport
+QT       += core gui serialport widgets
 
 unix {
     CONFIG += link_pkgconfig
@@ -20,27 +14,32 @@ win32 {
 
 CONFIG += c++11
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
 TARGET = Monark-ANT
 TEMPLATE = app
 
+disable-ant-power {
+    DEFINES += DISABLE_ANT_POWER
+}
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    MonarkConnection.cpp \
-    powerdevice.cpp \
-    LibUsb.cpp \
-    antmessage.cpp \
-    ant.cpp \
-    fecdevice.cpp \
-    antdevice.cpp
+disable-ant-fec {
+    DEFINES += DISABLE_ANT_FEC
+}
+
+SOURCES +=  main.cpp \
+            mainwindow.cpp \
+            MonarkConnection.cpp \
+            powerdevice.cpp \
+            LibUsb.cpp \
+            antmessage.cpp \
+            ant.cpp \
+            fecdevice.cpp \
+            antdevice.cpp
 
 HEADERS  += mainwindow.h \
-    MonarkConnection.h \
-    powerdevice.h \
-    LibUsb.h \
-    antmessage.h \
-    ant.h \
-    fecdevice.h \
-    antdevice.h
+            MonarkConnection.h \
+            powerdevice.h \
+            LibUsb.h \
+            antmessage.h \
+            ant.h \
+            fecdevice.h \
+            antdevice.h
