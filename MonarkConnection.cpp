@@ -311,7 +311,6 @@ void MonarkConnection::identifySerialPort()
 
     m_serial->setPortName(m_serialPortName);
 
-
     if (!m_serial->open(QSerialPort::ReadWrite))
     {
         qDebug() << "Error opening serial";
@@ -324,9 +323,6 @@ void MonarkConnection::identifySerialPort()
 
         // Set up polling
         connect(m_timer, SIGNAL(timeout()), this, SLOT(requestAll()),Qt::DirectConnection);
-
-        // Set up initial model detection
-        //connect(m_startupTimer, SIGNAL(timeout()), this, SLOT(identifyModel()),Qt::DirectConnection);
     }
 
     identifyModel();
