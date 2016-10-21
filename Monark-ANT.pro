@@ -1,4 +1,4 @@
-QT       += core gui serialport widgets
+QT       += core gui serialport widgets bluetooth
 
 unix {
     CONFIG += link_pkgconfig
@@ -33,7 +33,8 @@ SOURCES +=  main.cpp \
             antmessage.cpp \
             ant.cpp \
             fecdevice.cpp \
-            antdevice.cpp
+            antdevice.cpp \
+            btcyclingpowerservice.cpp
 
 HEADERS  += mainwindow.h \
             MonarkConnection.h \
@@ -42,4 +43,5 @@ HEADERS  += mainwindow.h \
             antmessage.h \
             ant.h \
             fecdevice.h \
-            antdevice.h
+            antdevice.h \
+            btcyclingpowerservice.h

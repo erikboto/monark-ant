@@ -21,6 +21,7 @@
 #include "LibUsb.h"
 #include "ant.h"
 #include "MonarkConnection.h"
+#include "btcyclingpowerservice.h"
 #include <QDebug>
 
 int main(int argc, char *argv[])
@@ -32,12 +33,16 @@ int main(int argc, char *argv[])
     MonarkConnection *monark = new MonarkConnection();
     ANT * ant = new ANT();
 
+    BTCyclingPowerService *btpower = new BTCyclingPowerService();
+
     QObject::connect(monark, SIGNAL(power(quint16)), ant, SLOT(setCurrentPower(quint16)));
     QObject::connect(monark, SIGNAL(power(quint16)), &w, SLOT(onCurrentPowerChanged(quint16)));
     QObject::connect(monark, SIGNAL(cadence(quint8)), ant, SLOT(setCurrentCadence(quint8)));
     QObject::connect(&w, SIGNAL(currentLoadChanged(quint32)), monark, SLOT(setLoad(uint)));
     QObject::connect(monark, SIGNAL(connectionStatus(bool)), &w, SLOT(onConnectionStatusChanged(bool)));
     QObject::connect(ant, SIGNAL(newTargetPower(quint32)), &w, SLOT(setCurrentLoad(quint32)));
+
+    QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
 
     monark->start();
     ant->start();
