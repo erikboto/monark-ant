@@ -5,8 +5,8 @@
 BTCyclingPowerService::BTCyclingPowerService(QObject *parent) : QObject(parent),
     m_clientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
                                             QByteArray(2,0))),
-    m_power(50),
-    m_cadence(67)
+    m_power(0),
+    m_cadence(0)
 {
     m_measurementChar.setUuid(QBluetoothUuid::CyclingPowerMeasurement);
     m_measurementChar.setValue(QByteArray(4,0));

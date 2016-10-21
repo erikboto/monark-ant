@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
     QObject::connect(ant, SIGNAL(newTargetPower(quint32)), &w, SLOT(setCurrentLoad(quint32)));
 
     QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
+    QObject::connect(monark, &MonarkConnection::cadence, btpower, &BTCyclingPowerService::setCadence);
 
     monark->start();
     ant->start();
