@@ -296,6 +296,10 @@ void MonarkConnection::identifySerialPort()
         QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
         foreach (QSerialPortInfo port, ports)
         {
+#ifdef RASPBERRYPI
+            if (port.systemLocation() == "/dev/ttyAMA0")
+                continue;
+#endif
             qDebug() << "Looking for Monark at " << port.systemLocation();
             if (discover(port.systemLocation()))
             {
