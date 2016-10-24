@@ -25,6 +25,10 @@ disable-ant-fec {
     DEFINES += DISABLE_ANT_FEC
 }
 
+raspberry-pi {
+    DEFINES += RASPBERRYPI
+}
+
 SOURCES +=  main.cpp \
             mainwindow.cpp \
             MonarkConnection.cpp \
