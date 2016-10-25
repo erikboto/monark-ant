@@ -78,7 +78,7 @@ void BTCyclingPowerService::transmitMeasurement()
     lastCrankEventTime += timeUpdate;
     accumulatedCrankRevs += newCrankRevs;
 
-    ds << flags << m_power++ << accumulatedCrankRevs << lastCrankEventTime;
+    ds << flags << m_power << accumulatedCrankRevs << lastCrankEventTime;
     QLowEnergyCharacteristic measChar = m_service->characteristic(QBluetoothUuid::CyclingPowerMeasurement);
     m_service->writeCharacteristic(measChar, value);
 }
