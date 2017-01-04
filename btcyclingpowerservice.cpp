@@ -17,8 +17,9 @@ BTCyclingPowerService::BTCyclingPowerService(QObject *parent) : QObject(parent),
     QByteArray value;
     QDataStream ds(&value, QIODevice::ReadWrite);
     ds.setByteOrder(QDataStream::LittleEndian);
-    quint16 flags = 0b0000000000100000;
-    ds << flags << m_power << (quint16)0 << (quint16)0;
+    //                10987654321098765432109876543210
+    quint32 flags = 0b00000000000100000000000000000000;
+    ds << flags;
     m_featureChar.setValue(value);
     m_featureChar.setProperties(QLowEnergyCharacteristic::Read);
 

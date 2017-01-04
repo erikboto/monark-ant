@@ -38,7 +38,8 @@ SOURCES +=  main.cpp \
             ant.cpp \
             fecdevice.cpp \
             antdevice.cpp \
-            btcyclingpowerservice.cpp
+            btcyclingpowerservice.cpp \
+    btheartrateservice.cpp
 
 HEADERS  += mainwindow.h \
             MonarkConnection.h \
@@ -48,4 +49,5 @@ HEADERS  += mainwindow.h \
             ant.h \
             fecdevice.h \
             antdevice.h \
-            btcyclingpowerservice.h
+            btcyclingpowerservice.h \
+    btheartrateservice.h
