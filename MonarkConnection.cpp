@@ -98,6 +98,7 @@ void MonarkConnection::run()
     m_timer = new QTimer();
 
     connect(m_startupTimer, SIGNAL(timeout()), this, SLOT(identifySerialPort()), Qt::DirectConnection);
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(requestAll()), Qt::DirectConnection);
 
     qDebug() << "Started Monark Thread";
     exec();
@@ -121,7 +122,7 @@ void MonarkConnection::requestAll()
         {
             // failure to write to device, bail out
             emit connectionStatus(false);
-            this->exit(-1);
+            m_startupTimer->start();
         }
         m_load = m_loadToWrite;
         QByteArray data = m_serial->readAll();
@@ -137,7 +138,7 @@ void MonarkConnection::requestPower()
     {
         // failure to write to device, bail out
         emit connectionStatus(false);
-        this->exit(-1);
+        m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
     quint16 p = data.toInt();
@@ -151,7 +152,7 @@ void MonarkConnection::requestPulse()
     {
         // failure to write to device, bail out
         emit connectionStatus(false);
-        this->exit(-1);
+        m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
     quint8 p = data.toInt();
@@ -165,7 +166,7 @@ void MonarkConnection::requestCadence()
     {
         // failure to write to device, bail out
 
-        this->exit(-1);
+        m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
     quint8 c = data.toInt();
@@ -181,7 +182,7 @@ void MonarkConnection::identifyModel()
     {
         // failure to write to device, bail out
         emit connectionStatus(false);
-        this->exit(-1);
+        m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
     m_id = QString(data);
@@ -193,7 +194,7 @@ void MonarkConnection::identifyModel()
         {
             // failure to write to device, bail out
             emit connectionStatus(false);
-            this->exit(-1);
+            m_startupTimer->start();
         }
         QByteArray data = readAnswer(500);
         servo = QString(data);
@@ -291,8 +292,16 @@ bool MonarkConnection::discover(QString portName)
 void MonarkConnection::identifySerialPort()
 {
     qDebug() << __func__;
+
     bool found = false;
+
+    // Make sure the port is closed to start with
+    m_serial->close();
+
+    m_timer->stop();
+
     do {
+        qDebug() << "Refreshing list of serial ports...";
         QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
         foreach (QSerialPortInfo port, ports)
         {
@@ -318,15 +327,12 @@ void MonarkConnection::identifySerialPort()
     if (!m_serial->open(QSerialPort::ReadWrite))
     {
         qDebug() << "Error opening serial";
-        exit(-1);
+        m_startupTimer->start();
     } else {
         configurePort(m_serial);
 
         // Discard any existing data
         QByteArray data = m_serial->readAll();
-
-        // Set up polling
-        connect(m_timer, SIGNAL(timeout()), this, SLOT(requestAll()),Qt::DirectConnection);
     }
 
     identifyModel();
