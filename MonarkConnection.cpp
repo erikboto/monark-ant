@@ -133,6 +133,9 @@ void MonarkConnection::requestAll()
 
 void MonarkConnection::requestPower()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("power\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -147,6 +150,9 @@ void MonarkConnection::requestPower()
 
 void MonarkConnection::requestPulse()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("pulse\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -161,6 +167,9 @@ void MonarkConnection::requestPulse()
 
 void MonarkConnection::requestCadence()
 {
+    // Always empty read buffer first
+    m_serial->readAll();
+
     m_serial->write("pedal\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -260,7 +269,7 @@ bool MonarkConnection::discover(QString portName)
 
         // Read id from bike
         sp.write("id\r");
-        sp.waitForBytesWritten(-1);
+        sp.waitForBytesWritten(2000);
 
         QByteArray id;
         do
