@@ -30,7 +30,7 @@ class FECDevice : public QObject, public ANTDevice
 {
     Q_OBJECT
 public:
-    explicit FECDevice(LibUsb * usb, const unsigned char channel, QObject *parent = 0);
+    explicit FECDevice(LibUsb * usb, const unsigned char channel, unsigned short deviceId, QObject *parent = 0);
 
 
     // outgoing pages
@@ -91,6 +91,7 @@ private:
     int m_heartRate;
     int m_lastPage;
     int m_nextPage;
+    unsigned short m_deviceId;
 };
 
 #endif // FECDEVICE_H

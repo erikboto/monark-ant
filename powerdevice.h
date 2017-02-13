@@ -29,7 +29,7 @@ class PowerDevice :  public QObject, public ANTDevice
 {
     Q_OBJECT
 public:
-    explicit PowerDevice(LibUsb * usb, const unsigned char channel, QObject *parent = 0);
+    explicit PowerDevice(LibUsb * usb, const unsigned char channel, unsigned short deviceId, QObject *parent = 0);
 
     ANTMessage page16();
     ANTMessage page80();
@@ -53,6 +53,7 @@ private:
     unsigned char m_channel;
     quint16 m_power;
     unsigned char m_cadence;
+    unsigned short m_deviceId;
 };
 
 #endif // POWERDEVICE_H

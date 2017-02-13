@@ -23,7 +23,7 @@
 #define FEC_STATE_MASK 0xF0
 #define FEC_CAPS_MASK 0x0F
 
-FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, QObject *parent) : QObject(parent),
+FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short deviceId, QObject *parent) : QObject(parent),
     m_usb(usb),
     m_currLapMarkerHigh(false),
     m_state(State::Ready),
@@ -33,7 +33,8 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, QObject *parent) 
     m_cadence(0),
     m_heartRate(0),
     m_lastPage(-1),
-    m_nextPage(16)
+    m_nextPage(16),
+    m_deviceId(deviceId)
 {
     m_timer.start();
 
@@ -409,7 +410,7 @@ void FECDevice::configureChannel()
     ANTMessage assignCh = ANTMessage::assignChannel(m_channel, 0x10, 0);
     m_usb->write((char *)assignCh.data,assignCh.length);
 
-    ANTMessage id = ANTMessage::setChannelID(m_channel,0x70, 0x11, 0x05);
+    ANTMessage id = ANTMessage::setChannelID(m_channel, m_deviceId, 0x11, 0x05);
     m_usb->write((char *)id.data, id.length);
 
     ANTMessage chanPeriod = ANTMessage::setChannelPeriod(m_channel,8192);
