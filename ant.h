@@ -33,7 +33,7 @@ class ANT : public QThread
 {
     Q_OBJECT
 public:
-    ANT();
+    ANT(unsigned short deviceId);
 
 public slots:
     void setCurrentPower(quint16 power);
@@ -57,6 +57,7 @@ private:
     int length;
     int bytes;
     int checksum;
+    unsigned short m_deviceId;
 
 signals:
     void newTargetPower(quint32 targetPower);

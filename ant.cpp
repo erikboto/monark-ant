@@ -22,9 +22,10 @@
 #include <QDebug>
 #include "antmessage.h"
 
-ANT::ANT() :
+ANT::ANT(unsigned short deviceId) :
     m_usb(0),
-    m_state(ST_WAIT_FOR_SYNC)
+    m_state(ST_WAIT_FOR_SYNC),
+    m_deviceId(deviceId)
 {
 
 }
@@ -34,10 +35,10 @@ void ANT::run()
 
     m_usb = new LibUsb(TYPE_ANT);
 #ifndef DISABLE_ANT_POWER
-    m_devices[1] = new PowerDevice(m_usb,1);
+    m_devices[1] = new PowerDevice(m_usb,1, m_deviceId);
 #endif
 #ifndef DISABLE_ANT_FEC
-    m_devices[2] = new FECDevice(m_usb,2);
+    m_devices[2] = new FECDevice(m_usb,2, m_deviceId);
     FECDevice * fecDevice = static_cast<FECDevice*>(m_devices[2]);
     connect(fecDevice, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
 #endif

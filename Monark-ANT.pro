@@ -1,4 +1,4 @@
-QT       += core gui serialport widgets bluetooth
+QT       += core gui serialport widgets bluetooth network
 
 unix {
     CONFIG += link_pkgconfig

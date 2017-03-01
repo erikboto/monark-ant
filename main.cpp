@@ -23,6 +23,7 @@
 #include "MonarkConnection.h"
 #include "btcyclingpowerservice.h"
 #include <QDebug>
+#include <QNetworkInterface>
 
 int main(int argc, char *argv[])
 {
@@ -30,8 +31,30 @@ int main(int argc, char *argv[])
     MainWindow w;
     w.show();
 
+
+    // Use MAC-address of network interface to select a device ID for ANT+
+    QString hwaddr;
+    for (QNetworkInterface iface: QNetworkInterface::allInterfaces())
+    {
+
+        if (!(iface.flags() & QNetworkInterface::IsLoopBack))
+        {
+            hwaddr = iface.hardwareAddress();
+            break;
+        }
+    }
+
+    hwaddr = hwaddr.remove(":");
+    bool ok = false;
+    unsigned short devId = hwaddr.right(4).toInt(&ok, 16);
+    if (!ok)
+        devId = 1137;
+
+    qDebug() << "Using ANT+ device ID: " << devId;
+
+
     MonarkConnection *monark = new MonarkConnection();
-    ANT * ant = new ANT();
+    ANT * ant = new ANT(devId);
 
     BTCyclingPowerService *btpower = new BTCyclingPowerService();
 

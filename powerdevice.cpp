@@ -20,11 +20,12 @@
 #include "LibUsb.h"
 #include <QDebug>
 
-PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, QObject *parent) : QObject(parent),
+PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, unsigned short deviceId, QObject *parent) : QObject(parent),
     m_usb(usb),
     m_channel(channel),
     m_power(90),
-    m_cadence(0)
+    m_cadence(0),
+    m_deviceId(deviceId)
 {
 
 }
@@ -226,7 +227,7 @@ void PowerDevice::configureChannel()
     ANTMessage assignCh = ANTMessage::assignChannel(m_channel, 0x10, 0);
     m_usb->write((char *)assignCh.data,assignCh.length);
 
-    ANTMessage id = ANTMessage::setChannelID(m_channel,0x70, 0x0B, 0x05);
+    ANTMessage id = ANTMessage::setChannelID(m_channel, m_deviceId, 0x0B, 0x05);
     m_usb->write((char *)id.data, id.length);
 
     ANTMessage chanPeriod = ANTMessage::setChannelPeriod(m_channel,8182);
