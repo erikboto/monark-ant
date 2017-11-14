@@ -21,6 +21,7 @@
 
 #include <QObject>
 #include <QElapsedTimer>
+#include <QMap>
 #include "antmessage.h"
 #include "antdevice.h"
 
@@ -92,6 +93,8 @@ private:
     int m_lastPage;
     int m_nextPage;
     unsigned short m_deviceId;
+    QMap<int, double> m_speedFromPower;
+    double speedFromPower(int power);
 };
 
 #endif // FECDEVICE_H

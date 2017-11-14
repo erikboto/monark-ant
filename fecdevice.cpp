@@ -38,6 +38,28 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
 {
     m_timer.start();
 
+    // create a precalculated lookup table for speed given power
+
+
+    int last_p=1;
+    for (double v = 0.01; v < 20; v=v+0.001)
+    {
+        double m = 80; // kg
+        double cda = 0.4;
+        double air_dens = 1.225;
+
+        double p_drag = 0.5*cda*air_dens*v*v*v;
+        double p_roll = v*m*9.82*0.004;
+        double p_tot = p_drag + p_roll;
+
+        if (last_p != (int)p_tot)
+        {
+            m_speedFromPower[(int)p_tot] = v;
+            if (((int)p_tot) % 50 == 0)
+                qWarning() << "v = " << v*3.6 << " requires p = " << p_tot;
+        }
+        last_p = (int)p_tot;
+    }
 }
 
 ANTMessage FECDevice::fecPage16(bool toggleLap)
@@ -46,8 +68,9 @@ ANTMessage FECDevice::fecPage16(bool toggleLap)
     const unsigned char eqType = 0x19;  // trainer
     //const unsigned char eqType = 0x15;  // stationary bike
     const unsigned char distance = 0xFF; // not used due to our capabilities field, value doesn't matter
-    const unsigned char speedMSB = 0x0; // set speed to zero, it's a required field for trainers
-    const unsigned char speedLSB = 0x0;
+    const unsigned char speedMSB = ((int)(speedFromPower(m_currPower) * 1000) & 0xFF00) >> 8;
+    const unsigned char speedLSB = ((int)(speedFromPower(m_currPower) * 1000) & 0x00FF);
+
     const unsigned char heartRate = 0xFF; // set to invalid, not required value
 
     const unsigned char capabilities = 0x0; // Bit 0-3 No HR source, No distance or speed
@@ -431,4 +454,13 @@ void FECDevice::setCurrentCadence(quint8 cadence)
 void FECDevice::setCurrentPower(quint16 power)
 {
     m_currPower = power;
+}
+
+double FECDevice::speedFromPower(int power)
+{
+    double speed = 0;
+    if (m_speedFromPower.contains(power))
+    {
+        speed = m_speedFromPower[power];
+    }
 }
