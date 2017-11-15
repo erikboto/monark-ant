@@ -461,4 +461,6 @@ double FECDevice::speedFromPower(int power)
     {
         speed = m_speedFromPower[power];
     }
+
+    return speed;
 }
