@@ -5,8 +5,8 @@
 BTCyclingPowerService::BTCyclingPowerService(QObject *parent) : QObject(parent),
     m_clientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
                                             QByteArray(2,0))),
-    m_power(0),
-    m_cadence(0)
+    m_power(100),
+    m_cadence(90)
 {
     m_measurementChar.setUuid(QBluetoothUuid::CyclingPowerMeasurement);
     m_measurementChar.setValue(QByteArray(4,0));
@@ -68,6 +68,11 @@ void BTCyclingPowerService::transmitMeasurement()
     static quint16 accumulatedCrankRevs = 0;
     static quint16 lastCrankEventTime = 0;
     static double crankResidue = 0;
+
+    if (++m_power > 500)
+    {
+        m_power = 100;
+    }
 
     //                     left overs  +       revs/s         *         seconds passed
     double newCrankRevs = crankResidue + (double)m_cadence/60 * m_updateTimer.interval()/1000;

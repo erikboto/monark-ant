@@ -23,8 +23,8 @@
 PowerDevice::PowerDevice(LibUsb * usb, const unsigned char channel, unsigned short deviceId, QObject *parent) : QObject(parent),
     m_usb(usb),
     m_channel(channel),
-    m_power(90),
-    m_cadence(0),
+    m_power(100),
+    m_cadence(90),
     m_deviceId(deviceId)
 {
 
@@ -124,6 +124,11 @@ ANTMessage PowerDevice::page16()
     const unsigned char pedalpower = 0xFF; // not used
     static unsigned char eventCount = 0;
     static unsigned short accuPower = 0;
+
+    if (++m_power > 500)
+    {
+        m_power = 100;
+    }
 
     accuPower += m_power;
 
