@@ -44,8 +44,8 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
     int last_p=1;
     for (double v = 0.01; v < 20; v=v+0.001)
     {
-        double m = 80; // kg
-        double cda = 0.4;
+        double m = 105; // kg
+        double cda = 0.45;
         double air_dens = 1.225;
 
         double p_drag = 0.5*cda*air_dens*v*v*v;
@@ -55,8 +55,6 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
         if (last_p != (int)p_tot)
         {
             m_speedFromPower[(int)p_tot] = v;
-            if (((int)p_tot) % 50 == 0)
-                qWarning() << "v = " << v*3.6 << " requires p = " << p_tot;
         }
         last_p = (int)p_tot;
     }
