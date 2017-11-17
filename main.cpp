@@ -16,8 +16,7 @@
  * Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "mainwindow.h"
-#include <QApplication>
+#include <QCoreApplication>
 #include "LibUsb.h"
 #include "ant.h"
 #include "MonarkConnection.h"
@@ -27,10 +26,7 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-
+    QCoreApplication a(argc, argv);
 
     // Use MAC-address of network interface to select a device ID for ANT+
     QString hwaddr;
@@ -58,12 +54,8 @@ int main(int argc, char *argv[])
 
     BTCyclingPowerService *btpower = new BTCyclingPowerService();
 
-    QObject::connect(monark, SIGNAL(power(quint16)), ant, SLOT(setCurrentPower(quint16)));
-    QObject::connect(monark, SIGNAL(power(quint16)), &w, SLOT(onCurrentPowerChanged(quint16)));
-    QObject::connect(monark, SIGNAL(cadence(quint8)), ant, SLOT(setCurrentCadence(quint8)));
-    QObject::connect(&w, SIGNAL(currentLoadChanged(quint32)), monark, SLOT(setLoad(uint)));
-    QObject::connect(monark, SIGNAL(connectionStatus(bool)), &w, SLOT(onConnectionStatusChanged(bool)));
-    QObject::connect(ant, SIGNAL(newTargetPower(quint32)), &w, SLOT(setCurrentLoad(quint32)));
+    QObject::connect(monark, &MonarkConnection::power, ant, &ANT::setCurrentPower);
+    QObject::connect(monark, &MonarkConnection::cadence, ant, &ANT::setCurrentCadence);
 
     QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
     QObject::connect(monark, &MonarkConnection::cadence, btpower, &BTCyclingPowerService::setCadence);

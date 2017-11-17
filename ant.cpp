@@ -123,10 +123,10 @@ void ANT::receiveByte(unsigned char byte) {
 void ANT::processMessage()
 {
 
-    fprintf(stderr, "Recv: ");
+    //fprintf(stderr, "Recv: ");
     for (int i=0; i<=rxMessage[ANT_OFFSET_LENGTH]; ++i)
     {
-        fprintf(stderr, "[%02x]", rxMessage[ANT_OFFSET_DATA+i]);
+        //fprintf(stderr, "[%02x]", rxMessage[ANT_OFFSET_DATA+i]);
     }
 
    fprintf(stderr, "\n");

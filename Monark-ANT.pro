@@ -1,4 +1,4 @@
-QT       += core gui serialport widgets bluetooth network
+QT       += core gui serialport bluetooth network
 
 unix {
     CONFIG += link_pkgconfig
@@ -30,7 +30,6 @@ raspberry-pi {
 }
 
 SOURCES +=  main.cpp \
-            mainwindow.cpp \
             MonarkConnection.cpp \
             powerdevice.cpp \
             LibUsb.cpp \
@@ -40,8 +39,7 @@ SOURCES +=  main.cpp \
             antdevice.cpp \
             btcyclingpowerservice.cpp
 
-HEADERS  += mainwindow.h \
-            MonarkConnection.h \
+HEADERS  += MonarkConnection.h \
             powerdevice.h \
             LibUsb.h \
             antmessage.h \
