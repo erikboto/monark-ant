@@ -23,6 +23,8 @@
 #include "btcyclingpowerservice.h"
 #include <QDebug>
 #include <QNetworkInterface>
+#include <QDBusConnection>
+#include "dbusadaptor.h"
 
 int main(int argc, char *argv[])
 {
@@ -48,9 +50,12 @@ int main(int argc, char *argv[])
 
     qDebug() << "Using ANT+ device ID: " << devId;
 
-
     MonarkConnection *monark = new MonarkConnection();
     ANT * ant = new ANT(devId);
+
+    DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark);
+    QDBusConnection::sessionBus().registerObject("/Monark", monark);
+    QDBusConnection::sessionBus().registerService("se.unixshell");
 
     BTCyclingPowerService *btpower = new BTCyclingPowerService();
 

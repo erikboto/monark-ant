@@ -1,15 +1,8 @@
-QT       += core gui serialport bluetooth network
+QT       += core gui serialport bluetooth network dbus
 
 unix {
     CONFIG += link_pkgconfig
     PKGCONFIG += libusb
-}
-
-win32 {
-    LIBUSB_INSTALL = ""
-    LIBUSB_LIBS = -L$${LIBUSB_INSTALL}/lib/gcc -lusb
-    INCLUDEPATH += $${LIBUSB_INSTALL}/include
-    LIBS        += $${LIBUSB_LIBS}
 }
 
 CONFIG += c++11
@@ -37,7 +30,8 @@ SOURCES +=  main.cpp \
             ant.cpp \
             fecdevice.cpp \
             antdevice.cpp \
-            btcyclingpowerservice.cpp
+            btcyclingpowerservice.cpp \
+            dbusadaptor.cpp
 
 HEADERS  += MonarkConnection.h \
             powerdevice.h \
@@ -46,4 +40,5 @@ HEADERS  += MonarkConnection.h \
             ant.h \
             fecdevice.h \
             antdevice.h \
-            btcyclingpowerservice.h
+            btcyclingpowerservice.h \
+            dbusadaptor.h
