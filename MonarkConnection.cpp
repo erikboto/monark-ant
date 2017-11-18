@@ -29,7 +29,9 @@ MonarkConnection::MonarkConnection() :
     m_canControlPower(false),
     m_load(0),
     m_loadToWrite(0),
-    m_shouldWriteLoad(false)
+    m_power(0),
+    m_cadence(0),
+    m_pulse(0)
 {
 }
 
@@ -114,7 +116,7 @@ void MonarkConnection::requestAll()
     requestPulse();
     requestCadence();
 
-    if ((m_loadToWrite != m_load) && m_canControlPower)
+    if ((m_loadToWrite != m_load) && m_mode == MONARK_MODE_WATT && canDoLoad())
     {
         QString cmd = QString("power %1\r").arg(m_loadToWrite);
         m_serial->write(cmd.toStdString().c_str());
@@ -125,6 +127,37 @@ void MonarkConnection::requestAll()
             m_startupTimer->start();
         }
         m_load = m_loadToWrite;
+        QByteArray data = m_serial->readAll();
+    }
+
+    if ((m_kpToWrite != m_kp) && m_mode == MONARK_MODE_KP && canDoKp())
+    {
+        QString cmd = QString("kp %1\r").arg(QString::number(m_kpToWrite, 'f', 1 ));
+        m_serial->write(cmd.toStdString().c_str());
+        if (!m_serial->waitForBytesWritten(500))
+        {
+            // failure to write to device, bail out
+            emit connectionStatus(false);
+            m_startupTimer->start();
+        }
+        m_kp = m_kpToWrite;
+        QByteArray data = m_serial->readAll();
+    }
+
+    if ((m_mode == MONARK_MODE_KP) && canDoLoad() && !canDoKp())
+    {
+        // Calculate what wattage to request to simulate selected kp
+        // watt = kp * cadence * 0.98
+        unsigned int load = (m_kpToWrite * m_cadence) * 0.98;
+
+        QString cmd = QString("power %1\r").arg(load);
+        m_serial->write(cmd.toStdString().c_str());
+        if (!m_serial->waitForBytesWritten(500))
+        {
+            // failure to write to device, bail out
+            emit connectionStatus(false);
+            m_startupTimer->start();
+        }
         QByteArray data = m_serial->readAll();
     }
 
@@ -144,8 +177,8 @@ void MonarkConnection::requestPower()
         m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
-    quint16 p = data.toInt();
-    emit power(p);
+    quint16 m_power = data.toInt();
+    emit power(m_power);
 }
 
 void MonarkConnection::requestPulse()
@@ -161,8 +194,8 @@ void MonarkConnection::requestPulse()
         m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
-    quint8 p = data.toInt();
-    emit pulse(p);
+    quint8 m_pulse = data.toInt();
+    emit pulse(m_pulse);
 }
 
 void MonarkConnection::requestCadence()
@@ -178,8 +211,8 @@ void MonarkConnection::requestCadence()
         m_startupTimer->start();
     }
     QByteArray data = readAnswer(500);
-    quint8 c = data.toInt();
-    emit cadence(c);
+    quint8 m_cadence = data.toInt();
+    emit cadence(m_cadence);
 }
 
 void MonarkConnection::identifyModel()
@@ -226,7 +259,19 @@ void MonarkConnection::identifyModel()
 void MonarkConnection::setLoad(unsigned int load)
 {
     m_loadToWrite = load;
-    m_shouldWriteLoad = true;
+    m_mode = MONARK_MODE_WATT;
+}
+
+void MonarkConnection::setKp(double kp)
+{
+    if (kp < 0)
+        kp = 0;
+
+    if (kp > 7)
+        kp = 7;
+
+    m_kpToWrite = kp;
+    m_mode = MONARK_MODE_KP;
 }
 
 /*
@@ -288,8 +333,27 @@ bool MonarkConnection::discover(QString portName)
         // Should check for all bike ids known to use this protocol
         if (QString(id).toLower().contains("lt") ||
             QString(id).toLower().contains("lc") ||
+            QString(id).toLower().contains("mec") ||
             QString(id).toLower().contains("novo")) {
             found = true;
+        }
+
+        qDebug() << "Connected to bike: " << id;
+
+        if (id.toLower().startsWith("lc"))
+        {
+            m_type = MONARK_LC;
+        } else if (id.toLower().startsWith("novo")) {
+            m_type = MONARK_LC_NOVO;
+        } else if (id.toLower().startsWith("mec")) {
+            m_type = MONARK_839E;
+        } else if (id.toLower().startsWith("lt")) {
+            m_type = MONARK_LT2;
+        }
+
+        if (canDoLoad())
+        {
+            setLoad(100);
         }
     }
 
@@ -350,4 +414,44 @@ void MonarkConnection::identifySerialPort()
     m_timer->start();
 
     emit connectionStatus(true);
+}
+
+bool MonarkConnection::canDoLoad()
+{
+    bool result = false;
+
+    switch (m_type)
+    {
+    case MONARK_LC: // fall through
+    case MONARK_LC_NOVO: // fall through
+    case MONARK_839E:
+        result = true;
+        break;
+    case MONARK_LT2: // fall through
+    default:
+        result = false;
+        break;
+    }
+
+    return result;
+}
+
+bool MonarkConnection::canDoKp()
+{
+    bool result = false;
+
+    switch (m_type)
+    {
+    case MONARK_LC_NOVO:
+        result = true;
+        break;
+    case MONARK_LC: // fall through
+    case MONARK_LT2: // fall through
+    case MONARK_839E: // fall through
+    default:
+        result = false;
+        break;
+    }
+
+    return result;
 }
