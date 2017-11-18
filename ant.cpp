@@ -129,7 +129,7 @@ void ANT::processMessage()
         //fprintf(stderr, "[%02x]", rxMessage[ANT_OFFSET_DATA+i]);
     }
 
-   fprintf(stderr, "\n");
+   //fprintf(stderr, "\n");
 
     switch (rxMessage[ANT_OFFSET_ID]) {
     case ANT_NOTIF_STARTUP:
