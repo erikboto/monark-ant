@@ -217,8 +217,6 @@ void MonarkConnection::requestCadence()
 
 void MonarkConnection::identifyModel()
 {
-    QString servo = "";
-
     m_serial->write("id\r");
     if (!m_serial->waitForBytesWritten(500))
     {
@@ -229,31 +227,23 @@ void MonarkConnection::identifyModel()
     QByteArray data = readAnswer(500);
     m_id = QString(data);
 
-    if (m_id.toLower().startsWith("novo"))
-    {
-        m_serial->write("servo\r");
-        if (!m_serial->waitForBytesWritten(500))
-        {
-            // failure to write to device, bail out
-            emit connectionStatus(false);
-            m_startupTimer->start();
-        }
-        QByteArray data = readAnswer(500);
-        servo = QString(data);
-    }
-
-
-    qDebug() << "Connected to bike: " << m_id;
-    qDebug() << "Servo: : " << servo;
-
     if (m_id.toLower().startsWith("lc"))
     {
-        m_canControlPower = true;
-        setLoad(100);
-    } else if (m_id.toLower().startsWith("novo") && servo != "manual") {
-        m_canControlPower = true;
+        m_type = MONARK_LC;
+    } else if (m_id.toLower().startsWith("novo")) {
+        m_type = MONARK_LC_NOVO;
+    } else if (m_id.toLower().startsWith("mec")) {
+        m_type = MONARK_839E;
+    } else if (m_id.toLower().startsWith("lt")) {
+        m_type = MONARK_LT2;
+    }
+
+    if (canDoLoad())
+    {
         setLoad(100);
     }
+
+    qDebug() << "Connected to bike: " << m_id;
 }
 
 void MonarkConnection::setLoad(unsigned int load)
@@ -339,22 +329,6 @@ bool MonarkConnection::discover(QString portName)
         }
 
         qDebug() << "Connected to bike: " << id;
-
-        if (id.toLower().startsWith("lc"))
-        {
-            m_type = MONARK_LC;
-        } else if (id.toLower().startsWith("novo")) {
-            m_type = MONARK_LC_NOVO;
-        } else if (id.toLower().startsWith("mec")) {
-            m_type = MONARK_839E;
-        } else if (id.toLower().startsWith("lt")) {
-            m_type = MONARK_LT2;
-        }
-
-        if (canDoLoad())
-        {
-            setLoad(100);
-        }
     }
 
     sp.close();
