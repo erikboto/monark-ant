@@ -43,6 +43,7 @@ public slots:
     void requestCadence();
     void identifyModel();
     void setLoad(unsigned int load);
+    unsigned int load() {return m_load;}
 
 private:
     QString m_serialPortName;
