@@ -455,3 +455,31 @@ bool MonarkConnection::canDoKp()
 
     return result;
 }
+
+void MonarkConnection::setMode(MonarkMode mode)
+{
+    if (mode == m_mode)
+    {
+        return;
+    }
+
+    if (mode == MONARK_MODE_KP)
+    {
+        if (m_cadence != 0)
+        {
+            m_kpToWrite = m_power / m_cadence / 0.98;
+        } else {
+            m_kpToWrite = 1;
+        }
+
+        m_mode = MONARK_MODE_KP;
+        emit modeChanged(m_mode);
+    }
+
+    if (mode == MONARK_MODE_WATT)
+    {
+        m_loadToWrite = m_power;
+        m_mode = MONARK_MODE_WATT;
+        emit modeChanged(m_mode);
+    }
+}

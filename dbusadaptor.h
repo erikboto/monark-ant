@@ -28,6 +28,7 @@ class DBusAdaptor : public QDBusAbstractAdaptor
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "se.unixshell.MonarkControl")
     Q_PROPERTY(quint16 targetPower READ targetPower WRITE setTargetPower)
+    Q_PROPERTY(double targetKp READ targetKp WRITE setTargetKp)
     Q_PROPERTY(quint8 mode READ mode WRITE setMode)
 
 public:
@@ -36,17 +37,19 @@ public:
 public slots:
     quint16 targetPower();
     void setTargetPower(quint16 targetPower);
+    double targetKp();
+    void setTargetKp(double targetKp);
     quint8 mode();
     void setMode(quint8 mode);
 
 signals:
     void targetPowerChanged(quint16 power);
+    void targetKpChanged(double kp);
     void currentPower(quint16 power);
     void currentCadence(quint8 cadence);
     void modeChanged(quint8 mode);
 
 private:
-    quint8 m_mode;
     MonarkConnection *m_monark;
 
 };
