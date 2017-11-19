@@ -26,7 +26,6 @@ MonarkConnection::MonarkConnection() :
     m_serial(0),
     m_pollInterval(1000),
     m_timer(0),
-    m_canControlPower(false),
     m_load(0),
     m_loadToWrite(0),
     m_power(0),
@@ -177,7 +176,7 @@ void MonarkConnection::requestPower()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    quint16 m_power = data.toInt();
+    m_power = data.toInt();
     emit power(m_power);
 }
 
@@ -194,7 +193,7 @@ void MonarkConnection::requestPulse()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    quint8 m_pulse = data.toInt();
+    m_pulse = data.toInt();
     emit pulse(m_pulse);
 }
 
@@ -211,7 +210,7 @@ void MonarkConnection::requestCadence()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    quint8 m_cadence = data.toInt();
+    m_cadence = data.toInt();
     emit cadence(m_cadence);
 }
 
