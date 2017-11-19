@@ -53,7 +53,6 @@ private:
     QTimer *m_timer;
     QString readAnswer(int timeoutMs = -1);
     QMutex m_mutex;
-    bool m_canControlPower;
     unsigned int m_load;
     unsigned int m_loadToWrite;
     bool m_shouldWriteLoad;

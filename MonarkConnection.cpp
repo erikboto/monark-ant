@@ -26,7 +26,6 @@ MonarkConnection::MonarkConnection() :
     m_serial(0),
     m_pollInterval(1000),
     m_timer(0),
-    m_canControlPower(false),
     m_load(0),
     m_loadToWrite(0),
     m_shouldWriteLoad(false)
