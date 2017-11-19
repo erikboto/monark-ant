@@ -248,7 +248,12 @@ void MonarkConnection::identifyModel()
 void MonarkConnection::setLoad(unsigned int load)
 {
     m_loadToWrite = load;
-    m_mode = MONARK_MODE_WATT;
+
+    if (m_mode != MONARK_MODE_WATT)
+    {
+        m_mode = MONARK_MODE_WATT;
+        emit modeChanged(m_mode);
+    }
 }
 
 void MonarkConnection::setKp(double kp)
@@ -260,7 +265,12 @@ void MonarkConnection::setKp(double kp)
         kp = 7;
 
     m_kpToWrite = kp;
-    m_mode = MONARK_MODE_KP;
+
+    if (m_mode != MONARK_MODE_KP)
+    {
+        m_mode = MONARK_MODE_KP;
+        emit modeChanged(m_mode);
+    }
 }
 
 /*
