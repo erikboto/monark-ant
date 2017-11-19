@@ -13,11 +13,7 @@ quint8 DBusAdaptor::mode()
 
 void DBusAdaptor::setMode(quint8 mode)
 {
-    if (m_monark->mode() != mode)
-    {
-        m_monark->setMode((MonarkConnection::MonarkMode)mode);
-        emit modeChanged(mode);
-    }
+    m_monark->setMode((MonarkConnection::MonarkMode)mode);
 }
 
 void DBusAdaptor::setTargetPower(quint16 targetPower)
