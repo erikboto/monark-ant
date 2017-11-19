@@ -63,7 +63,7 @@ int MonarkConnection::pollInterval()
  * Private function that reads a complete reply and prepares if for
  * processing by replacing \r with \0
  */
-QByteArray MonarkConnection::readAnswer(int timeoutMs)
+QString MonarkConnection::readAnswer(int timeoutMs)
 {
     QByteArray data;
 
@@ -78,7 +78,7 @@ QByteArray MonarkConnection::readAnswer(int timeoutMs)
     } while (data.indexOf('\r') == -1);
 
     data.replace("\r", "\0");
-    return data;
+    return QString(data);
 }
 
 /**
@@ -176,7 +176,7 @@ void MonarkConnection::requestPower()
         emit connectionStatus(false);
         m_startupTimer->start();
     }
-    QByteArray data = readAnswer(500);
+    QString data = readAnswer(500);
     quint16 m_power = data.toInt();
     emit power(m_power);
 }
@@ -193,7 +193,7 @@ void MonarkConnection::requestPulse()
         emit connectionStatus(false);
         m_startupTimer->start();
     }
-    QByteArray data = readAnswer(500);
+    QString data = readAnswer(500);
     quint8 m_pulse = data.toInt();
     emit pulse(m_pulse);
 }
@@ -207,10 +207,10 @@ void MonarkConnection::requestCadence()
     if (!m_serial->waitForBytesWritten(500))
     {
         // failure to write to device, bail out
-
+        emit connectionStatus(false);
         m_startupTimer->start();
     }
-    QByteArray data = readAnswer(500);
+    QString data = readAnswer(500);
     quint8 m_cadence = data.toInt();
     emit cadence(m_cadence);
 }
@@ -224,7 +224,7 @@ void MonarkConnection::identifyModel()
         emit connectionStatus(false);
         m_startupTimer->start();
     }
-    QByteArray data = readAnswer(500);
+    QString data = readAnswer(500);
     m_id = QString(data);
 
     if (m_id.toLower().startsWith("lc"))

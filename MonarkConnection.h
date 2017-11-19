@@ -60,7 +60,7 @@ private:
     QString m_id;
     void run();
     QTimer *m_timer;
-    QByteArray readAnswer(int timeoutMs = -1);
+    QString readAnswer(int timeoutMs = -1);
     QMutex m_mutex;
     bool m_canControlPower;
     unsigned int m_load;
