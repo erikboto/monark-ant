@@ -213,7 +213,7 @@ void MonarkConnection::identifyModel()
     qDebug() << "Connected to bike: " << m_id;
     qDebug() << "Servo: : " << servo;
 
-    if (m_id.toLower().startsWith("lc"))
+    if (m_id.toLower().startsWith("lc") || m_id.toLower().startsWith("mec"))
     {
         m_canControlPower = true;
         setLoad(100);
@@ -287,6 +287,7 @@ bool MonarkConnection::discover(QString portName)
 
         // Should check for all bike ids known to use this protocol
         if (QString(id).toLower().contains("lt") ||
+            QString(id).toLower().contains("mec") ||
             QString(id).toLower().contains("lc") ||
             QString(id).toLower().contains("novo")) {
             found = true;
