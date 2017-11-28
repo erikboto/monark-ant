@@ -437,12 +437,12 @@ bool MonarkConnection::canDoKp()
 
     switch (m_type)
     {
+    case MONARK_839E: // fall through
     case MONARK_LC_NOVO:
         result = true;
         break;
     case MONARK_LC: // fall through
     case MONARK_LT2: // fall through
-    case MONARK_839E: // fall through
     default:
         result = false;
         break;
