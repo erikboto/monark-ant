@@ -358,6 +358,18 @@ void MonarkConnection::identifySerialPort()
 
     do {
         qDebug() << "Refreshing list of serial ports...";
+
+        // Look for test interface
+
+        if (discover("/tmp/monark-test"))
+        {
+            // found monark
+            qDebug() << "FOUND!";
+            m_serialPortName = "/tmp/monark-test";
+            found = true;
+            break;
+        }
+
         QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
         foreach (QSerialPortInfo port, ports)
         {
