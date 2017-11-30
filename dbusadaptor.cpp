@@ -1,7 +1,8 @@
 #include "dbusadaptor.h"
 
-DBusAdaptor::DBusAdaptor(MonarkConnection *obj) : QDBusAbstractAdaptor(obj),
-    m_monark(obj)
+DBusAdaptor::DBusAdaptor(MonarkConnection *obj, GearSimulator *gs) : QDBusAbstractAdaptor(obj),
+    m_monark(obj),
+    m_gearSimulator(gs)
 {
     connect(m_monark, &MonarkConnection::modeChanged, this, &DBusAdaptor::modeChanged);
 }
@@ -42,4 +43,14 @@ void DBusAdaptor::setTargetKp(double targetKp)
 double DBusAdaptor::targetKp()
 {
     return m_monark->kp();
+}
+
+void DBusAdaptor::incGear()
+{
+    m_gearSimulator->incGear();
+}
+
+void DBusAdaptor::decGear()
+{
+    m_gearSimulator->decGear();
 }

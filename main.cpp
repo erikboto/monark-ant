@@ -25,6 +25,7 @@
 #include <QNetworkInterface>
 #include <QDBusConnection>
 #include "dbusadaptor.h"
+#include "gearsimulator.h"
 
 int main(int argc, char *argv[])
 {
@@ -53,7 +54,8 @@ int main(int argc, char *argv[])
     MonarkConnection *monark = new MonarkConnection();
     ANT * ant = new ANT(devId);
 
-    DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark);
+    GearSimulator *gearSimu = new GearSimulator(monark);
+    DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark, gearSimu);
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
 
@@ -61,6 +63,9 @@ int main(int argc, char *argv[])
 
     QObject::connect(monark, &MonarkConnection::power, ant, &ANT::setCurrentPower);
     QObject::connect(monark, &MonarkConnection::cadence, ant, &ANT::setCurrentCadence);
+
+    QObject::connect(ant, &ANT::newTargetPower, monark, &MonarkConnection::setLoad);
+    QObject::connect(ant, &ANT::gradeChanged, gearSimu, &GearSimulator::onGradeChanged);
 
     QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
     QObject::connect(monark, &MonarkConnection::cadence, btpower, &BTCyclingPowerService::setCadence);

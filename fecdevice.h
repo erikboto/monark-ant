@@ -57,12 +57,14 @@ public:
     // incoming pages
     // page 49 required
     double powerFromFecPage49(const unsigned char * message);
+    double gradeFromFecPage51(const unsigned char * message);
 
     enum class State {Reserved = 0, Asleep = 1, Ready = 2, InUse = 3, Finished = 4};
 
     void setState(State newState);
     void setCurrentPower(int power);
     void setTargetPower(quint32 targetPower);
+    void setGrade(double grade);
     void setCadence(int cadence);
     void setHeartrate(int heartrate);
 
@@ -70,6 +72,7 @@ public:
     void configureChannel();
 signals:
     void newTargetPower(quint32 targetPower);
+    void gradeChanged(double grade);
 
 public slots:
     void channelEvent(unsigned char *ant_message);
@@ -87,6 +90,7 @@ private:
     unsigned char m_channel;
     int m_currPower;
     quint32 m_targetPower;
+    double m_grade;
     int m_cadence;
     int m_heartRate;
     int m_lastPage;

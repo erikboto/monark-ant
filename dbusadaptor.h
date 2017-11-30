@@ -22,6 +22,7 @@
 
 #include <QDBusAbstractAdaptor>
 #include "MonarkConnection.h"
+#include "gearsimulator.h"
 
 class DBusAdaptor : public QDBusAbstractAdaptor
 {
@@ -32,7 +33,7 @@ class DBusAdaptor : public QDBusAbstractAdaptor
     Q_PROPERTY(quint8 mode READ mode WRITE setMode)
 
 public:
-    DBusAdaptor(MonarkConnection *obj);
+    DBusAdaptor(MonarkConnection *obj, GearSimulator *gs);
 
 public slots:
     quint16 targetPower();
@@ -41,6 +42,8 @@ public slots:
     void setTargetKp(double targetKp);
     quint8 mode();
     void setMode(quint8 mode);
+    void incGear();
+    void decGear();
 
 signals:
     void targetPowerChanged(quint16 power);
@@ -51,6 +54,7 @@ signals:
 
 private:
     MonarkConnection *m_monark;
+    GearSimulator *m_gearSimulator;
 
 };
 

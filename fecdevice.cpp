@@ -30,6 +30,7 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
     m_channel(channel),
     m_currPower(100),
     m_targetPower(0),
+    m_grade(0),
     m_cadence(0),
     m_heartRate(0),
     m_lastPage(-1),
@@ -92,7 +93,7 @@ ANTMessage FECDevice::fecPage17(bool toggleLap)
 ANTMessage FECDevice::fecPage54()
 {
     const unsigned char page = 0x36; // page 54
-    const unsigned char caps = 0b00000010; // support target power mode only
+    const unsigned char caps = 0b00000110; // support target power mode and simulation
 
     return ANTMessage(9, ANT_BROADCAST_DATA, m_channel, page, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, caps);
 }
@@ -109,6 +110,19 @@ double FECDevice::powerFromFecPage49(const unsigned char *message)
 
     return (message[7]<<8 | message[6])/4;
 
+}
+
+double FECDevice::gradeFromFecPage51(const unsigned char *message)
+{
+    // Verify page type
+    if (message[0] != 0x33)
+    {
+        // wrong page
+        qDebug() << "gradeFromFecPage51: Trying to interpret wrong page type";
+        return 0;
+    }
+    // Byte 5 and 6 contains value in unit 0.01%, with an offset of 200
+    return ((message[6]<<8 | message[5])/100)-200;
 }
 
 ANTMessage FECDevice::fecPage80()
@@ -225,6 +239,16 @@ void FECDevice::setTargetPower(quint32 targetPower)
         m_targetPower = targetPower;
         emit newTargetPower(m_targetPower);
         qDebug() << "New target power: " << m_targetPower;
+    }
+}
+
+void FECDevice::setGrade(double grade)
+{
+    if (m_grade != grade)
+    {
+        m_grade = grade;
+        emit gradeChanged(m_grade);
+        qDebug() << "New grade: " << m_grade;
     }
 }
 
@@ -364,6 +388,17 @@ void FECDevice::handleAckData(unsigned char *ant_message)
             unsigned char * ant_sport_mess = ant_message+4;
             setTargetPower(powerFromFecPage49(ant_sport_mess));
         }
+        break;
+    case 0x32: // wind resistance
+        qDebug() << "Got wind resistance page 0x32";
+        break;
+    case 0x33: // track resistance
+        qDebug() << "Got track resistance page 0x33";
+        {
+            unsigned char * ant_sport_mess = ant_message+4;
+            setGrade(gradeFromFecPage51(ant_sport_mess));
+        }
+
         break;
     case 0x46: // Request for a special page, we should only get req for page 54
     {

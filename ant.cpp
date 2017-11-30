@@ -41,6 +41,7 @@ void ANT::run()
     m_devices[2] = new FECDevice(m_usb,2, m_deviceId);
     FECDevice * fecDevice = static_cast<FECDevice*>(m_devices[2]);
     connect(fecDevice, SIGNAL(newTargetPower(quint32)), this, SIGNAL(newTargetPower(quint32)));
+    connect(fecDevice, SIGNAL(gradeChanged(double)), this, SIGNAL(gradeChanged(double)));
 #endif
 
     qDebug() << "Starting ANT thread";
