@@ -57,6 +57,7 @@ private:
     unsigned int m_loadToWrite;
     bool m_shouldWriteLoad;
     QTimer *m_startupTimer;
+    bool m_canControlPower;
 
 
 private slots:

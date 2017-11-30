@@ -143,7 +143,7 @@ void MonarkConnection::requestPower()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    m_power = data.toInt();
+    quint16 m_power = data.toInt();
     emit power(m_power);
 }
 
@@ -160,7 +160,7 @@ void MonarkConnection::requestPulse()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    m_pulse = data.toInt();
+    quint8 m_pulse = data.toInt();
     emit pulse(m_pulse);
 }
 
@@ -177,7 +177,7 @@ void MonarkConnection::requestCadence()
         m_startupTimer->start();
     }
     QString data = readAnswer(500);
-    m_cadence = data.toInt();
+    quint8 m_cadence = data.toInt();
     emit cadence(m_cadence);
 }
 
@@ -204,8 +204,7 @@ void MonarkConnection::identifyModel()
             emit connectionStatus(false);
             m_startupTimer->start();
         }
-        QByteArray data = readAnswer(500);
-        servo = QString(data);
+        servo = readAnswer(500);
     }
 
 
