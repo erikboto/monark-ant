@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 
     GearSimulator *gearSimu = new GearSimulator(monark);
     DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark, gearSimu);
+    Q_UNUSED(dbusAdaptor)
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
 

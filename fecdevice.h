@@ -70,9 +70,12 @@ public:
 
     int channel() const {return m_channel;}
     void configureChannel();
+
+    enum FecMode { FEC_UNKNOWN, FEC_SIMULATION, FEC_ERG };
 signals:
     void newTargetPower(quint32 targetPower);
     void gradeChanged(double grade);
+    void fecModeChanged(FecMode mode);
 
 public slots:
     void channelEvent(unsigned char *ant_message);
@@ -96,6 +99,8 @@ private:
     int m_lastPage;
     int m_nextPage;
     unsigned short m_deviceId;
+    FecMode m_fecMode;
+    void setFecMode(FecMode mode);
 };
 
 #endif // FECDEVICE_H

@@ -478,3 +478,18 @@ void MonarkConnection::setMode(MonarkMode mode)
         emit modeChanged(m_mode);
     }
 }
+
+void MonarkConnection::setFecMode(FECDevice::FecMode mode)
+{
+    m_fecMode = mode;
+}
+
+bool MonarkConnection::isFecErg()
+{
+    return (m_fecMode == FECDevice::FEC_ERG);
+}
+
+bool MonarkConnection::isFecSimulation()
+{
+    return (m_fecMode == FECDevice::FEC_SIMULATION);
+}

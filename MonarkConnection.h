@@ -23,6 +23,7 @@
 #include <QThread>
 #include <QTimer>
 #include <QMutex>
+#include <fecdevice.h>
 
 class MonarkConnection : public QThread
 {
@@ -37,6 +38,8 @@ public:
     bool discover(QString portName);
     enum MonarkMode { MONARK_MODE_WATT=0, MONARK_MODE_KP=1 };
     enum MonarkType { MONARK_UNKNOWN, MONARK_LT2, MONARK_LC, MONARK_LC_NOVO, MONARK_839E };
+    bool isFecSimulation();
+    bool isFecErg();
 
 public slots:
     void requestAll();
@@ -51,7 +54,7 @@ public slots:
     double kp() { return m_kp; }
     MonarkMode mode() { return m_mode; }
     MonarkType type() { return m_type; }
-
+    void setFecMode(FECDevice::FecMode mode);
 
 private:
     QString m_serialPortName;
@@ -76,7 +79,7 @@ private:
     quint16 m_power;
     quint8 m_cadence;
     quint8 m_pulse;
-
+    FECDevice::FecMode m_fecMode;
 
 private slots:
     void identifySerialPort();

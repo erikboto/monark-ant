@@ -1,6 +1,6 @@
 First set up a pair of fake serial ports that are connected using socat:
 
-socat pty,echo=0,raw,link=/tmp/monark-test,b4800,parenb=0,cs8,cstopb=1 ptecho=0,raw,link=/tmp/monark-test2,b4800,parenb=0,cs8,cstopb=1
+socat pty,echo=0,raw,link=/tmp/monark-test,b4800,parenb=0,cs8,cstopb=1 pty,echo=0,raw,link=/tmp/monark-test2,b4800,parenb=0,cs8,cstopb=1
 
 Then start the bike simulation:
 ./fake_monark.py

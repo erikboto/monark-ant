@@ -47,10 +47,24 @@ double DBusAdaptor::targetKp()
 
 void DBusAdaptor::incGear()
 {
-    m_gearSimulator->incGear();
+    if (m_monark->isFecSimulation())
+    {
+        m_gearSimulator->incGear();
+    } else if (m_monark->mode() == MonarkConnection::MONARK_MODE_KP){
+        m_monark->setKp(m_monark->kp() + 0.3);
+    } else {
+        m_monark->setLoad(m_monark->load() + 5);
+    }
 }
 
 void DBusAdaptor::decGear()
 {
-    m_gearSimulator->decGear();
+    if (m_monark->isFecSimulation())
+    {
+        m_gearSimulator->decGear();
+    } else if (m_monark->mode() == MonarkConnection::MONARK_MODE_KP){
+        m_monark->setKp(m_monark->kp() - 0.3);
+    } else {
+        m_monark->setLoad(m_monark->load() - 5);
+    }
 }

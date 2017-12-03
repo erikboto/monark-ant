@@ -35,10 +35,10 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
     m_heartRate(0),
     m_lastPage(-1),
     m_nextPage(16),
-    m_deviceId(deviceId)
+    m_deviceId(deviceId),
+    m_fecMode(FEC_UNKNOWN)
 {
     m_timer.start();
-
 }
 
 ANTMessage FECDevice::fecPage16(bool toggleLap)
@@ -234,6 +234,7 @@ void FECDevice::setHeartrate(int heartrate)
 
 void FECDevice::setTargetPower(quint32 targetPower)
 {
+    setFecMode(FEC_ERG);
     if (m_targetPower != targetPower)
     {
         m_targetPower = targetPower;
@@ -244,6 +245,7 @@ void FECDevice::setTargetPower(quint32 targetPower)
 
 void FECDevice::setGrade(double grade)
 {
+    setFecMode(FEC_SIMULATION);
     if (m_grade != grade)
     {
         m_grade = grade;
@@ -466,4 +468,13 @@ void FECDevice::setCurrentCadence(quint8 cadence)
 void FECDevice::setCurrentPower(quint16 power)
 {
     m_currPower = power;
+}
+
+void FECDevice::setFecMode(FecMode mode)
+{
+    if (m_fecMode != mode)
+    {
+        m_fecMode = mode;
+        emit fecModeChanged(m_fecMode);
+    }
 }

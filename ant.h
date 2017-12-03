@@ -62,6 +62,7 @@ private:
 signals:
     void newTargetPower(quint32 targetPower);
     void gradeChanged(double grade);
+    void fecModeChanged(FECDevice::FecMode mode);
 
 };
 
