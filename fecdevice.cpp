@@ -38,6 +38,7 @@ FECDevice::FECDevice(LibUsb *usb, const unsigned char channel, unsigned short de
     m_deviceId(deviceId),
     m_fecMode(FEC_UNKNOWN)
 {
+    qRegisterMetaType<FecMode>("FecMode");
     m_timer.start();
 }
 

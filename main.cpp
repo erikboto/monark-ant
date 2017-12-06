@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(ant, &ANT::newTargetPower, monark, &MonarkConnection::setLoad);
     QObject::connect(ant, &ANT::gradeChanged, gearSimu, &GearSimulator::onGradeChanged);
+    QObject::connect(ant, &ANT::fecModeChanged, monark, &MonarkConnection::setFecMode);
 
     QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
     QObject::connect(monark, &MonarkConnection::cadence, btpower, &BTCyclingPowerService::setCadence);
