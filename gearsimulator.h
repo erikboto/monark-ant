@@ -15,6 +15,8 @@ signals:
 public slots:
     void incGear();
     void decGear();
+    void incGearLots();
+    void decGearLots();
     void onGradeChanged(double grade);
 
 private:

@@ -68,3 +68,27 @@ void DBusAdaptor::decGear()
         m_monark->setLoad(m_monark->load() - 5);
     }
 }
+
+void DBusAdaptor::incGearLots()
+{
+    if (m_monark->isFecSimulation())
+    {
+        m_gearSimulator->incGearLots();
+    } else if (m_monark->mode() == MonarkConnection::MONARK_MODE_KP){
+        m_monark->setKp(m_monark->kp() + 2);
+    } else {
+        m_monark->setLoad(m_monark->load() + 100);
+    }
+}
+
+void DBusAdaptor::decGearLots()
+{
+    if (m_monark->isFecSimulation())
+    {
+        m_gearSimulator->decGearLots();
+    } else if (m_monark->mode() == MonarkConnection::MONARK_MODE_KP){
+        m_monark->setKp(m_monark->kp() - 2);
+    } else {
+        m_monark->setLoad(m_monark->load() - 100);
+    }
+}

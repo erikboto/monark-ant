@@ -21,6 +21,18 @@ void GearSimulator::decGear()
     recalculateKp();
 }
 
+void GearSimulator::incGearLots()
+{
+    m_kpOffset += 3;
+    recalculateKp();
+}
+
+void GearSimulator::decGearLots()
+{
+    m_kpOffset -= 3;
+    recalculateKp();
+}
+
 void GearSimulator::onGradeChanged(double grade)
 {
     m_grade = grade;

@@ -44,6 +44,8 @@ public slots:
     void setMode(quint8 mode);
     void incGear();
     void decGear();
+    void incGearLots();
+    void decGearLots();
 
 signals:
     void targetPowerChanged(quint16 power);
