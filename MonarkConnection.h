@@ -63,7 +63,8 @@ private:
     int m_pollInterval;
     QString m_id;
     void run();
-    QTimer *m_timer;
+    QTimer *m_readTimer;
+    QTimer *m_writeTimer;
     QString readAnswer(int timeoutMs = -1);
     QMutex m_mutex;
     unsigned int m_load;

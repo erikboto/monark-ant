@@ -25,7 +25,8 @@
 MonarkConnection::MonarkConnection() :
     m_serial(0),
     m_pollInterval(1000),
-    m_timer(0),
+    m_readTimer(0),
+    m_writeTimer(0),
     m_load(0),
     m_loadToWrite(0),
     m_power(0),
@@ -49,7 +50,7 @@ void MonarkConnection::setPollInterval(int interval)
     if (interval != m_pollInterval)
     {
         m_pollInterval = interval;
-        m_timer->setInterval(m_pollInterval);
+        m_readTimer->setInterval(m_pollInterval);
     }
 }
 
@@ -96,10 +97,14 @@ void MonarkConnection::run()
     m_startupTimer->setSingleShot(true);
     m_startupTimer->start();
 
-    m_timer = new QTimer();
+    m_readTimer = new QTimer();
+    m_writeTimer = new QTimer();
+    m_writeTimer->setInterval(250);
+    m_writeTimer->setSingleShot(false);
 
     connect(m_startupTimer, SIGNAL(timeout()), this, SLOT(identifySerialPort()), Qt::DirectConnection);
-    connect(m_timer, SIGNAL(timeout()), this, SLOT(requestAll()), Qt::DirectConnection);
+    connect(m_readTimer, SIGNAL(timeout()), this, SLOT(requestAll()), Qt::DirectConnection);
+    connect(m_writeTimer, SIGNAL(timeout()), this, SLOT(sendTargetWattOrKp()), Qt::DirectConnection);
 
     qDebug() << "Started Monark Thread";
     exec();
@@ -114,14 +119,21 @@ void MonarkConnection::requestAll()
     requestPower();
     requestPulse();
     requestCadence();
+    m_mutex.unlock();
 
     sendTargetWattOrKp();
-
-    m_mutex.unlock();
 }
 
 void MonarkConnection::sendTargetWattOrKp()
 {
+    // Only proceed if there seems to be enough time to be sure it's done before next read request
+    if (m_readTimer->remainingTime() < 150)
+        return;
+
+    // If something else is blocking mutex, don't start another round of requests
+    if (! m_mutex.tryLock())
+        return;
+
     // We have a new target power to write
     if ((m_loadToWrite != m_load) && m_mode == MONARK_MODE_WATT && canDoLoad())
     {
@@ -169,6 +181,8 @@ void MonarkConnection::sendTargetWattOrKp()
         }
         QByteArray data = m_serial->readAll();
     }
+
+    m_mutex.unlock();
 }
 
 void MonarkConnection::requestPower()
@@ -362,7 +376,8 @@ void MonarkConnection::identifySerialPort()
     // Make sure the port is closed to start with
     m_serial->close();
 
-    m_timer->stop();
+    m_readTimer->stop();
+    m_writeTimer->stop();
 
     do {
         qDebug() << "Refreshing list of serial ports...";
@@ -413,8 +428,9 @@ void MonarkConnection::identifySerialPort()
 
     identifyModel();
 
-    m_timer->setInterval(1000);
-    m_timer->start();
+    m_readTimer->setInterval(1000);
+    m_readTimer->start();
+    m_writeTimer->start();
 
     emit connectionStatus(true);
 }
