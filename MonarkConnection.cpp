@@ -115,6 +115,14 @@ void MonarkConnection::requestAll()
     requestPulse();
     requestCadence();
 
+    sendTargetWattOrKp();
+
+    m_mutex.unlock();
+}
+
+void MonarkConnection::sendTargetWattOrKp()
+{
+    // We have a new target power to write
     if ((m_loadToWrite != m_load) && m_mode == MONARK_MODE_WATT && canDoLoad())
     {
         QString cmd = QString("power %1\r").arg(m_loadToWrite);
@@ -129,6 +137,7 @@ void MonarkConnection::requestAll()
         QByteArray data = m_serial->readAll();
     }
 
+    // We have a new kp to write to a bike than does kp-targets (e.g. LC6)
     if ((m_kpToWrite != m_kp) && m_mode == MONARK_MODE_KP && canDoKp())
     {
         QString cmd = QString("kp %1\r").arg(QString::number(m_kpToWrite, 'f', 1 ));
@@ -143,6 +152,7 @@ void MonarkConnection::requestAll()
         QByteArray data = m_serial->readAll();
     }
 
+    // We're in kp-target mode on a bike that only does target power (e.g. LC4)
     if ((m_mode == MONARK_MODE_KP) && canDoLoad() && !canDoKp())
     {
         // Calculate what wattage to request to simulate selected kp
@@ -159,8 +169,6 @@ void MonarkConnection::requestAll()
         }
         QByteArray data = m_serial->readAll();
     }
-
-    m_mutex.unlock();
 }
 
 void MonarkConnection::requestPower()

@@ -46,6 +46,7 @@ public slots:
     void requestPower();
     void requestPulse();
     void requestCadence();
+    void sendTargetWattOrKp();
     void identifyModel();
     void setLoad(unsigned int load);
     void setKp(double kp);
