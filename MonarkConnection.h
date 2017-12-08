@@ -50,7 +50,7 @@ public slots:
     void setLoad(unsigned int load);
     void setKp(double kp);
     void setMode(MonarkMode mode);
-    unsigned int load() { return m_load; }
+    unsigned int load() { return m_loadToWrite; }
     double kp() { return m_kp; }
     MonarkMode mode() { return m_mode; }
     MonarkType type() { return m_type; }
