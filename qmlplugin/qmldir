@@ -1,0 +1,2 @@
+module se.unixshell.monark
+plugin qmlplugin

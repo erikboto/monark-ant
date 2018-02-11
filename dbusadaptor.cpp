@@ -5,6 +5,8 @@ DBusAdaptor::DBusAdaptor(MonarkConnection *obj, GearSimulator *gs) : QDBusAbstra
     m_gearSimulator(gs)
 {
     connect(m_monark, &MonarkConnection::modeChanged, this, &DBusAdaptor::modeChanged);
+    connect(m_monark, &MonarkConnection::power, this, &DBusAdaptor::currentPower);
+    connect(m_monark, &MonarkConnection::cadence, this, &DBusAdaptor::currentCadence);
 }
 
 quint8 DBusAdaptor::mode()
