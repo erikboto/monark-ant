@@ -46,7 +46,8 @@ void Monark::updateCurrentCadence(unsigned char newCurrentCadence)
 
 Monark::Mode Monark::mode()
 {
-    Mode m;
+    Mode m = Mode::Kp;
+
     switch(m_mci->mode()) {
     case 0:
         m = Mode::Kp;
