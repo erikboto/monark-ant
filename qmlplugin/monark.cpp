@@ -46,14 +46,14 @@ void Monark::updateCurrentCadence(unsigned char newCurrentCadence)
 
 Monark::Mode Monark::mode()
 {
-    Mode m = Mode::Kp;
+    Mode m = Mode::Power;
 
     switch(m_mci->mode()) {
     case 0:
-        m = Mode::Kp;
+        m = Mode::Power;
         break;
     case 1:
-        m = Mode::Power;
+        m = Mode::Kp;
         break;
     default:
         qWarning() << "Got invalid mode from Monark-ANT";
