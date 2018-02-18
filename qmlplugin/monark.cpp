@@ -10,6 +10,8 @@ Monark::Monark(QQuickItem *parent):
     connect(m_mci, &SeUnixshellMonarkControlInterface::currentPower, this, &Monark::updateCurrentPower);
     connect(m_mci, &SeUnixshellMonarkControlInterface::currentCadence, this, &Monark::updateCurrentCadence);
     connect(m_mci, &SeUnixshellMonarkControlInterface::modeChanged, this, &Monark::modeChanged);
+    connect(m_mci, &SeUnixshellMonarkControlInterface::targetPowerChanged, this, &Monark::targetPowerChanged);
+    connect(m_mci, &SeUnixshellMonarkControlInterface::targetKpChanged, this, &Monark::targetKpChanged);
 }
 
 Monark::~Monark()
@@ -64,4 +66,24 @@ Monark::Mode Monark::mode()
 void Monark::setMode(Mode newMode)
 {
     m_mci->setMode((unsigned char)newMode);
+}
+
+unsigned int Monark::targetPower()
+{
+    return m_mci->targetPower();
+}
+
+void Monark::setTargetPower(unsigned int newTargetPower)
+{
+    m_mci->setTargetPower(newTargetPower);
+}
+
+double Monark::targetKp()
+{
+    return m_mci->targetKp();
+}
+
+void Monark::setTargetKp(double newTargetKp)
+{
+    m_mci->setTargetKp(newTargetKp);
 }
