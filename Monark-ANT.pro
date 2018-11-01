@@ -30,9 +30,9 @@ SOURCES +=  main.cpp \
             ant.cpp \
             fecdevice.cpp \
             antdevice.cpp \
-            btcyclingpowerservice.cpp \
             dbusadaptor.cpp \
-            gearsimulator.cpp
+            gearsimulator.cpp \
+            bledatabroadcaster.cpp
 
 HEADERS  += MonarkConnection.h \
             powerdevice.h \
@@ -41,6 +41,6 @@ HEADERS  += MonarkConnection.h \
             ant.h \
             fecdevice.h \
             antdevice.h \
-            btcyclingpowerservice.h \
             dbusadaptor.h \
-            gearsimulator.h
+            gearsimulator.h \
+            bledatabroadcaster.h

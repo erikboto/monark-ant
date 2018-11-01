@@ -20,7 +20,7 @@
 #include "LibUsb.h"
 #include "ant.h"
 #include "MonarkConnection.h"
-#include "btcyclingpowerservice.h"
+#include "bledatabroadcaster.h"
 #include <QDebug>
 #include <QNetworkInterface>
 #include <QDBusConnection>
@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
 
-    BTCyclingPowerService *btpower = new BTCyclingPowerService();
+    BLEDataBroadcaster *btpower = new BLEDataBroadcaster();
 
     QObject::connect(monark, &MonarkConnection::power, ant, &ANT::setCurrentPower);
     QObject::connect(monark, &MonarkConnection::cadence, ant, &ANT::setCurrentCadence);
@@ -69,8 +69,9 @@ int main(int argc, char *argv[])
     QObject::connect(ant, &ANT::gradeChanged, gearSimu, &GearSimulator::onGradeChanged);
     QObject::connect(ant, &ANT::fecModeChanged, monark, &MonarkConnection::setFecMode);
 
-    QObject::connect(monark, &MonarkConnection::power, btpower, &BTCyclingPowerService::setPower);
-    QObject::connect(monark, &MonarkConnection::cadence, btpower, &BTCyclingPowerService::setCadence);
+    QObject::connect(monark, &MonarkConnection::power, btpower, &BLEDataBroadcaster::setPower);
+    QObject::connect(monark, &MonarkConnection::cadence, btpower, &BLEDataBroadcaster::setCadence);
+    QObject::connect(monark, &MonarkConnection::pulse, btpower, &BLEDataBroadcaster::setHeartRate);
 
     monark->start();
     ant->start();
