@@ -15,7 +15,7 @@ class BLEDataBroadcaster : public QObject
 {
     Q_OBJECT
 public:
-    explicit BLEDataBroadcaster(QObject *parent = 0);
+    explicit BLEDataBroadcaster(unsigned short int devId, QObject *parent = 0);
 
 signals:
 

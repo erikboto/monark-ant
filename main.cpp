@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
 
-    BLEDataBroadcaster *btpower = new BLEDataBroadcaster();
+    BLEDataBroadcaster *btpower = new BLEDataBroadcaster(devId);
 
     QObject::connect(monark, &MonarkConnection::power, ant, &ANT::setCurrentPower);
     QObject::connect(monark, &MonarkConnection::cadence, ant, &ANT::setCurrentCadence);
