@@ -2,7 +2,7 @@
 
 #include <QDataStream>
 
-BLEDataBroadcaster::BLEDataBroadcaster(QObject *parent) : QObject(parent),
+BLEDataBroadcaster::BLEDataBroadcaster(unsigned short devId, QObject *parent) : QObject(parent),
     m_cpsClientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
                                                QByteArray(2,0))),
     m_hrClientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
@@ -59,9 +59,10 @@ BLEDataBroadcaster::BLEDataBroadcaster(QObject *parent) : QObject(parent),
 
 
     // Set up advertising data, services and controllers.
+    QString localName = QString("MonarkBLE %1").arg(devId);
     m_advertisingData.setDiscoverability(QLowEnergyAdvertisingData::DiscoverabilityGeneral);
     m_advertisingData.setIncludePowerLevel(true);
-    m_advertisingData.setLocalName("MonarkBLE");
+    m_advertisingData.setLocalName(localName);
     m_advertisingData.setServices(QList<QBluetoothUuid>() << QBluetoothUuid::HeartRate << QBluetoothUuid::CyclingPower);
 
     m_controller->startAdvertising(QLowEnergyAdvertisingParameters(),
