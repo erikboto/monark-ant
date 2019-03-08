@@ -5,11 +5,11 @@
 BLEDataBroadcaster::BLEDataBroadcaster(unsigned short devId, QObject *parent) : QObject(parent),
     m_cpsClientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
                                                QByteArray(2,0))),
-    m_hrClientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
-                                              QByteArray(2,0))),
     m_power(0),
     m_cadence(0),
-    m_heartRate(0)
+    m_heartRate(0),
+    m_hrClientConfig(QLowEnergyDescriptorData(QBluetoothUuid::ClientCharacteristicConfiguration,
+                                              QByteArray(2,0)))
 {
 
     m_controller = QLowEnergyController::createPeripheral();
