@@ -416,9 +416,9 @@ void FECDevice::handleAckData(unsigned char *ant_message)
 
 void FECDevice::handlePageRequest(unsigned char *message)
 {
-    const unsigned char descriptorByte1 = message[3];
-    const unsigned char descriptorByte2 = message[4];
-    const unsigned char numberOfTimes = message[5] & 0x7F;
+    //const unsigned char descriptorByte1 = message[3];
+    //const unsigned char descriptorByte2 = message[4];
+    //const unsigned char numberOfTimes = message[5] & 0x7F;
     bool replyUsingAck = message[5]>>7 == 1;
     const unsigned char requestedPage = message[6];
     const unsigned char commandType = message[7];
