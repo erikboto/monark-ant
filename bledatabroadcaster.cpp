@@ -39,7 +39,7 @@ BLEDataBroadcaster::BLEDataBroadcaster(unsigned short devId, QObject *parent) : 
     QDataStream ds(&value, QIODevice::ReadWrite);
     ds.setByteOrder(QDataStream::LittleEndian);
     //                10987654321098765432109876543210
-    quint32 flags = 0b00000000000100000000000000000000;
+    quint32 flags = 0b00000000000000000000000000000000;
     ds << flags;
     m_cpsFeatureChar.setValue(value);
     m_cpsFeatureChar.setProperties(QLowEnergyCharacteristic::Read);
