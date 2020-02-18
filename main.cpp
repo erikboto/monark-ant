@@ -21,6 +21,7 @@
 #include "ant.h"
 #include "MonarkConnection.h"
 #include "bledatabroadcaster.h"
+#include "ftmsdevice.h"
 #include <QDebug>
 #include <QNetworkInterface>
 #include <QDBusConnection>
@@ -60,7 +61,13 @@ int main(int argc, char *argv[])
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
 
-    BLEDataBroadcaster *btpower = new BLEDataBroadcaster(devId);
+    //BLEDataBroadcaster *btpower = new BLEDataBroadcaster(devId);
+    FTMSDevice *ftmsDevice = new FTMSDevice(devId);
+    QObject::connect(monark, &MonarkConnection::typeIdentified, ftmsDevice, [ftmsDevice, monark](){
+        ftmsDevice->setControllable(false);
+        ftmsDevice->initialize();
+        qDebug() << "canDoLoad: " << monark->canDoLoad() << " initializing";
+    }, Qt::QueuedConnection);
 
     QObject::connect(monark, &MonarkConnection::power, ant, &ANT::setCurrentPower);
     QObject::connect(monark, &MonarkConnection::cadence, ant, &ANT::setCurrentCadence);
@@ -69,9 +76,14 @@ int main(int argc, char *argv[])
     QObject::connect(ant, &ANT::gradeChanged, gearSimu, &GearSimulator::onGradeChanged);
     QObject::connect(ant, &ANT::fecModeChanged, monark, &MonarkConnection::setFecMode);
 
-    QObject::connect(monark, &MonarkConnection::power, btpower, &BLEDataBroadcaster::setPower);
-    QObject::connect(monark, &MonarkConnection::cadence, btpower, &BLEDataBroadcaster::setCadence);
-    QObject::connect(monark, &MonarkConnection::pulse, btpower, &BLEDataBroadcaster::setHeartRate);
+    QObject::connect(monark, &MonarkConnection::power, ftmsDevice, &FTMSDevice::setCurrentPower);
+    QObject::connect(monark, &MonarkConnection::cadence, ftmsDevice, &FTMSDevice::setCurrentCadence);
+    QObject::connect(ftmsDevice, &FTMSDevice::newTargetKp, monark, &MonarkConnection::setKp);
+    QObject::connect(ftmsDevice, &FTMSDevice::newTargetPower, monark, &MonarkConnection::setLoad);
+
+    //QObject::connect(monark, &MonarkConnection::power, btpower, &BLEDataBroadcaster::setPower);
+    //QObject::connect(monark, &MonarkConnection::cadence, btpower, &BLEDataBroadcaster::setCadence);
+    //QObject::connect(monark, &MonarkConnection::pulse, btpower, &BLEDataBroadcaster::setHeartRate);
 
     monark->start();
     ant->start();
