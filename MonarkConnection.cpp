@@ -264,6 +264,7 @@ void MonarkConnection::identifyModel()
         setLoad(100);
     }
 
+    emit typeIdentified();
     qDebug() << "Connected to bike: " << m_id;
 }
 

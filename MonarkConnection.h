@@ -40,6 +40,8 @@ public:
     enum MonarkType { MONARK_UNKNOWN, MONARK_LT2, MONARK_LC, MONARK_LC_NOVO, MONARK_839E };
     bool isFecSimulation();
     bool isFecErg();
+    bool canDoKp();
+    bool canDoLoad();
 
 public slots:
     void requestAll();
@@ -75,8 +77,6 @@ private:
 
     MonarkType m_type;
     MonarkMode m_mode;
-    bool canDoLoad();
-    bool canDoKp();
 
     quint16 m_power;
     quint8 m_cadence;
@@ -91,6 +91,7 @@ signals:
     void power(quint16);
     void connectionStatus(bool connected);
     void modeChanged(MonarkMode mode);
+    void typeIdentified();
 };
 
 #endif // _GC_MonarkConnection_h
