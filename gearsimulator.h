@@ -21,6 +21,7 @@ public slots:
 
 private:
     void recalculateKp();
+    double gradeToKp(double grade);
 
     MonarkConnection *m_monark;
     double m_grade;
