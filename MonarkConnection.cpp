@@ -401,6 +401,8 @@ void MonarkConnection::identifySerialPort()
             if (port.systemLocation() == "/dev/ttyAMA0")
                 continue;
 #endif
+	    if (port.systemLocation().startsWith("/dev/ttyACM"))
+                continue;
             qDebug() << "Looking for Monark at " << port.systemLocation();
             if (discover(port.systemLocation()))
             {
