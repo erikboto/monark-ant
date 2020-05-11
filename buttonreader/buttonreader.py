@@ -1,7 +1,7 @@
 #!/usr/bin/python3 -u
 
 import dbus
-from gi.repository import GObject
+from gi.repository import GLib
 from dbus.mainloop.glib import DBusGMainLoop
 import serial
 import threading
@@ -79,8 +79,7 @@ kr = KeyReader(port="/dev/ttyACM0", baud_rate=115200)
 kr.start()
 kr.add_callback(handle_key)
 monarkControl.setTargetPower(200)
-ml = GObject.MainLoop()
+ml = GLib.MainLoop()
 
-# GObject.timeout_add(1000, helloer)
-GObject.threads_init()
+# GLib.timeout_add(1000, helloer)
 ml.run()
