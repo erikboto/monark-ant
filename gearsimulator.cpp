@@ -1,6 +1,6 @@
 #include "gearsimulator.h"
 
-#define BASE_KP 2.5
+#define BASE_KP 0
 
 GearSimulator::GearSimulator(MonarkConnection *mc) :
     m_monark(mc),
@@ -41,5 +41,10 @@ void GearSimulator::onGradeChanged(double grade)
 
 void GearSimulator::recalculateKp()
 {
-    m_monark->setKp(BASE_KP + m_grade + m_kpOffset);
+    m_monark->setKp(BASE_KP + gradeToKp(m_grade) + m_kpOffset);
+}
+
+double GearSimulator::gradeToKp(double grade)
+{
+    return (grade + 8)/4;
 }
