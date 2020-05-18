@@ -235,8 +235,21 @@ void FTMSDevice::onIncomingControlPointCommand(QLowEnergyCharacteristic c ,QByte
         //qDebug() << "New Target Power: " << targetPower;
     }
         break;
+    case FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS:
+    {
+        qint16 windSpeed, grade;
+        quint8 crr, cw;
+        inData >> windSpeed;
+        inData >> grade;
+        inData >> crr;
+        inData >> cw;
+        //qDebug() << "New grade: " << grade;
+        emit newGrade(grade/100.0);
+        replyDs << (quint8)FTMS_RESPONSE_CODE << (quint8)FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS << (quint8)FTMS_SUCCESS;
+    }
+        break;
     default:
-        qDebug() << "Unhandled command";
+        qDebug() << "Unhandled command:" << cmd;
     }
 
     if (!reply.isEmpty())

@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
     //BLEDataBroadcaster *btpower = new BLEDataBroadcaster(devId);
     FTMSDevice *ftmsDevice = new FTMSDevice(devId);
     QObject::connect(monark, &MonarkConnection::typeIdentified, ftmsDevice, [ftmsDevice, monark](){
-        ftmsDevice->setControllable(false);
+        ftmsDevice->setControllable(monark->canDoLoad());
         ftmsDevice->initialize();
         qDebug() << "canDoLoad: " << monark->canDoLoad() << " initializing";
     }, Qt::QueuedConnection);
@@ -81,6 +81,7 @@ int main(int argc, char *argv[])
     QObject::connect(monark, &MonarkConnection::cadence, ftmsDevice, &FTMSDevice::setCurrentCadence);
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetKp, monark, &MonarkConnection::setKp);
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetPower, monark, &MonarkConnection::setLoad);
+    QObject::connect(ftmsDevice, &FTMSDevice::newGrade, gearSimu, &GearSimulator::onGradeChanged);
 
     MqttConnection mqttConnection(QString("Monark %1").arg(devId), monark);
 

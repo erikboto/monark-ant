@@ -31,6 +31,7 @@ public slots:
 signals:
     void newTargetPower(quint32 targetPower);
     void newTargetKp(double kp);
+    void newGrade(double grade);
 
 private slots:
     void onIncomingControlPointCommand(QLowEnergyCharacteristic c, QByteArray b);
