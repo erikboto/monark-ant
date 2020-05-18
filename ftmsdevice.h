@@ -10,6 +10,7 @@
 #include <QLowEnergyDescriptorData>
 #include <QLowEnergyAdvertisingParameters>
 #include <QTimer>
+#include "fecdevice.h"
 
 class FTMSDevice : public QObject
 {
@@ -32,9 +33,11 @@ signals:
     void newTargetPower(quint32 targetPower);
     void newTargetKp(double kp);
     void newGrade(double grade);
+    void simulationModeChanged(FECDevice::FecMode mode);
 
 private slots:
     void onIncomingControlPointCommand(QLowEnergyCharacteristic c, QByteArray b);
+    void setSimulationMode(bool isSimulation);
 
 private:
     QLowEnergyService *m_ftmsService;
@@ -67,6 +70,7 @@ private:
 
     unsigned short m_devId;
     bool m_isControllable;
+    bool m_isSimulation;
 };
 
 #endif // FTMSDEVICE_H

@@ -3,6 +3,8 @@
 #include <QDataStream>
 #include <QTimer>
 
+#include "fecdevice.h"
+
 #define FTMSDEVICE_FTMS_UUID 0x1826
 #define FTMSDEVICE_INDOOR_BIKE_CHAR_UUID 0x2AD2
 #define FTMSDEVICE_POWER_RANGE_CHAR_UUID 0x2AD8
@@ -17,7 +19,8 @@ FTMSDevice::FTMSDevice(unsigned short int devId, QObject *parent) : QObject(pare
     m_currentCadence(0),
     m_currentSpeed(0),
     m_devId(devId),
-    m_isControllable(false)
+    m_isControllable(false),
+    m_isSimulation(false)
 {
 
 }
@@ -213,6 +216,7 @@ void FTMSDevice::onIncomingControlPointCommand(QLowEnergyCharacteristic c ,QByte
         break;
     case FTMS_RESET:
         emit newTargetPower(100);
+        setSimulationMode(false);
         replyDs << (quint8)FTMS_RESPONSE_CODE << (quint8)FTMS_RESET << (quint8)FTMS_SUCCESS ;
         break;
     case FTMS_START_RESUME:
@@ -222,6 +226,7 @@ void FTMSDevice::onIncomingControlPointCommand(QLowEnergyCharacteristic c ,QByte
     {
         qint8 requestedResistanceLevel;
         inData >> requestedResistanceLevel;
+        setSimulationMode(false);
         emit newTargetKp(requestedResistanceLevel/10.0);
         replyDs << (quint8)FTMS_RESPONSE_CODE << (quint8)FTMS_SET_TARGET_RESISTANCE_LEVEL << (quint8)FTMS_SUCCESS ;
     }
@@ -231,6 +236,7 @@ void FTMSDevice::onIncomingControlPointCommand(QLowEnergyCharacteristic c ,QByte
         qint16 targetPower;
         inData >> targetPower;
         replyDs << (quint8)FTMS_RESPONSE_CODE << (quint8)FTMS_SET_TARGET_POWER << (quint8)FTMS_SUCCESS;
+        setSimulationMode(false);
         emit newTargetPower(targetPower);
         //qDebug() << "New Target Power: " << targetPower;
     }
@@ -244,6 +250,7 @@ void FTMSDevice::onIncomingControlPointCommand(QLowEnergyCharacteristic c ,QByte
         inData >> crr;
         inData >> cw;
         //qDebug() << "New grade: " << grade;
+        setSimulationMode(true);
         emit newGrade(grade/100.0);
         replyDs << (quint8)FTMS_RESPONSE_CODE << (quint8)FTMS_SET_INDOOR_BIKE_SIMULATION_PARAMS << (quint8)FTMS_SUCCESS;
     }
@@ -302,4 +309,21 @@ void FTMSDevice::restartAdvertising()
 void FTMSDevice::setControllable(bool isControllable)
 {
     m_isControllable = isControllable;
+}
+
+void FTMSDevice::setSimulationMode(bool isSimulation)
+{
+    if (m_isSimulation != isSimulation)
+    {
+        m_isSimulation = isSimulation;
+
+        if (m_isSimulation)
+        {
+            emit simulationModeChanged(FECDevice::FecMode::FEC_SIMULATION);
+        }
+        else
+        {
+            emit simulationModeChanged(FECDevice::FecMode::FEC_ERG);
+        }
+    }
 }
