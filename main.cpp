@@ -27,6 +27,7 @@
 #include <QDBusConnection>
 #include "dbusadaptor.h"
 #include "gearsimulator.h"
+#include "mqttconnection.h"
 
 int main(int argc, char *argv[])
 {
@@ -81,9 +82,7 @@ int main(int argc, char *argv[])
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetKp, monark, &MonarkConnection::setKp);
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetPower, monark, &MonarkConnection::setLoad);
 
-    //QObject::connect(monark, &MonarkConnection::power, btpower, &BLEDataBroadcaster::setPower);
-    //QObject::connect(monark, &MonarkConnection::cadence, btpower, &BLEDataBroadcaster::setCadence);
-    //QObject::connect(monark, &MonarkConnection::pulse, btpower, &BLEDataBroadcaster::setHeartRate);
+    MqttConnection mqttConnection(QString("Monark %1").arg(devId), monark);
 
     monark->start();
     ant->start();

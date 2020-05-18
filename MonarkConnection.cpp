@@ -29,6 +29,7 @@ MonarkConnection::MonarkConnection() :
     m_writeTimer(0),
     m_load(0),
     m_loadToWrite(0),
+    m_type(MONARK_UNKNOWN),
     m_power(0),
     m_cadence(0),
     m_pulse(0)

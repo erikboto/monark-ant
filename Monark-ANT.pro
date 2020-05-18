@@ -1,4 +1,4 @@
-QT       += core gui serialport bluetooth network dbus
+QT       += core gui serialport bluetooth network dbus mqtt
 
 unix {
     CONFIG += link_pkgconfig
@@ -24,6 +24,7 @@ raspberry-pi {
 
 SOURCES +=  main.cpp \
             MonarkConnection.cpp \
+            mqttconnection.cpp \
             powerdevice.cpp \
             LibUsb.cpp \
             antmessage.cpp \
@@ -36,6 +37,7 @@ SOURCES +=  main.cpp \
             ftmsdevice.cpp
 
 HEADERS  += MonarkConnection.h \
+            mqttconnection.h \
             powerdevice.h \
             LibUsb.h \
             antmessage.h \
