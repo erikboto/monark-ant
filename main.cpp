@@ -82,6 +82,7 @@ int main(int argc, char *argv[])
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetKp, monark, &MonarkConnection::setKp);
     QObject::connect(ftmsDevice, &FTMSDevice::newTargetPower, monark, &MonarkConnection::setLoad);
     QObject::connect(ftmsDevice, &FTMSDevice::newGrade, gearSimu, &GearSimulator::onGradeChanged);
+    QObject::connect(ftmsDevice, &FTMSDevice::simulationModeChanged, monark, &MonarkConnection::setFecMode);
 
     MqttConnection mqttConnection(QString("Monark %1").arg(devId), monark);
 
