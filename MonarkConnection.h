@@ -92,6 +92,9 @@ signals:
     void connectionStatus(bool connected);
     void modeChanged(MonarkMode mode);
     void typeIdentified();
+
+    void targetPowerChanged(unsigned int targetPower);
+    void targetKpChanged(double kp);
 };
 
 #endif // _GC_MonarkConnection_h

@@ -3,8 +3,14 @@
 #include "MonarkConnection.h"
 
 #define TARGET_POWER "monark/target/power"
+#define TARGET_SET_POWER "monark/target/set/power"
+
 #define TARGET_KP "monark/target/kp"
+#define TARGET_SET_KP "monark/target/set/kp"
+
 #define DETAILS_MODE "monark/details/mode"
+#define DETAILS_SET_MODE "monark/details/set/mode"
+
 #define DETAILS_NAME "monark/details/name"
 #define DETAILS_MODEL "monark/details/model"
 #define CURRENT_POWER "monark/current/power"
@@ -34,28 +40,15 @@ MqttConnection::MqttConnection(const QString &name,
 
         // Publish some retained info messages
         onTypeIdentified();
-        if (m_mc->mode() == MonarkConnection::MONARK_MODE_WATT)
-        {
-            m_client.publish(QMqttTopicName(DETAILS_MODE),
-                             QString("power").toLocal8Bit(),
-                             1, // qos
-                             true); // retain
-        }
-        else if (m_mc->mode() == MonarkConnection::MONARK_MODE_KP)
-        {
-            m_client.publish(QMqttTopicName(DETAILS_MODE),
-                             QString("kp").toLocal8Bit(),
-                             1, // qos
-                             true); // retain
-        }
-
+        onModeChanged(m_mc->mode());
+        onTargetKpChanged(m_mc->kp());
+        onTargetPowerChanged(m_mc->load());
         m_client.publish(QMqttTopicName(DETAILS_NAME),
                          QString(m_name).toLocal8Bit(),
                          1, // qos
                          true); // retain
 
         // Setup subscriptions
-        m_client.subscribe(m_currentValuesFilter);
         m_client.subscribe(m_targetValuesFilter);
         m_client.subscribe(m_deviceValuesFilter);
 
@@ -75,7 +68,7 @@ MqttConnection::MqttConnection(const QString &name,
 
 void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqttTopicName &topic)
 {
-    if (topic.name() == TARGET_POWER)
+    if (topic.name() == TARGET_SET_POWER)
     {
         bool ok;
         quint16 newTargetPower = QString::fromLocal8Bit(message).toUInt(&ok);
@@ -85,7 +78,7 @@ void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqt
         }
     }
 
-    if (topic.name() == TARGET_KP)
+    if (topic.name() == TARGET_SET_KP)
     {
         bool ok;
         double newTargetKp = QString::fromLocal8Bit(message).toDouble(&ok);
@@ -95,7 +88,7 @@ void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqt
         }
     }
 
-    if (topic.name() == DETAILS_MODE)
+    if (topic.name() == DETAILS_SET_MODE)
     {
         if (QString::fromLocal8Bit(message) == "power")
         {
@@ -111,7 +104,7 @@ void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqt
 void MqttConnection::onCurrentKpChanged(double newKp)
 {
     m_client.publish(QMqttTopicName(CURRENT_KP),
-                     QString::number(newKp, 'f', 3).toLocal8Bit());
+                     QString::number(newKp, 'f', 1).toLocal8Bit());
 }
 
 void MqttConnection::onCurrentPowerChanged(quint16 newPower)
@@ -134,20 +127,11 @@ void MqttConnection::onCurrentHeartrateChanged(quint8 newHeartrate)
 
 void MqttConnection::onModeChanged(MonarkConnection::MonarkMode newMode)
 {
-    if (newMode == MonarkConnection::MONARK_MODE_WATT)
-    {
-        m_client.publish(QMqttTopicName(DETAILS_MODE),
-                         QString("power").toLocal8Bit(),
-                         1, // qos
-                         true); // retain
-    }
-    else if (newMode == MonarkConnection::MONARK_MODE_KP)
-    {
-        m_client.publish(QMqttTopicName(DETAILS_MODE),
-                         QString("kp").toLocal8Bit(),
-                         1, // qos
-                         true); // retain
-    }
+    m_client.publish(QMqttTopicName(DETAILS_MODE),
+                     newMode == MonarkConnection::MONARK_MODE_WATT ? QString("power").toLocal8Bit() : QString("kp").toLocal8Bit(),
+                     1, // qos
+                     true); // retain
+
 }
 
 void MqttConnection::onTypeIdentified()
@@ -178,5 +162,20 @@ void MqttConnection::onTypeIdentified()
                          1, // qos
                          true); // retain
     }
+}
 
+void MqttConnection::onTargetKpChanged(double kp)
+{
+    m_client.publish(QMqttTopicName(TARGET_KP),
+                     QString::number(kp, 'f', 1).toLocal8Bit(),
+                     1, // qos
+                     true); // retain
+}
+
+void MqttConnection::onTargetPowerChanged(unsigned int power)
+{
+    m_client.publish(QMqttTopicName(TARGET_POWER),
+                     QString::number(power).toLocal8Bit(),
+                     1, // qos
+                     true); // retain
 }

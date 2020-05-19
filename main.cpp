@@ -58,6 +58,8 @@ int main(int argc, char *argv[])
 
     GearSimulator *gearSimu = new GearSimulator(monark);
     DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark, gearSimu);
+    MqttConnection *mqttConnection = new MqttConnection(QString("Monark %1").arg(devId), monark);
+
     Q_UNUSED(dbusAdaptor)
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
     QDBusConnection::sessionBus().registerService("se.unixshell");
@@ -84,7 +86,8 @@ int main(int argc, char *argv[])
     QObject::connect(ftmsDevice, &FTMSDevice::newGrade, gearSimu, &GearSimulator::onGradeChanged);
     QObject::connect(ftmsDevice, &FTMSDevice::simulationModeChanged, monark, &MonarkConnection::setFecMode);
 
-    MqttConnection mqttConnection(QString("Monark %1").arg(devId), monark);
+    QObject::connect(monark, &MonarkConnection::targetKpChanged, mqttConnection, &MqttConnection::onTargetKpChanged);
+    QObject::connect(monark, &MonarkConnection::targetPowerChanged, mqttConnection, &MqttConnection::onTargetPowerChanged);
 
     monark->start();
     ant->start();

@@ -18,6 +18,8 @@ public slots:
     void onCurrentKpChanged(double newKp);
     void onCurrentCadenceChanged(quint8 newCadence);
     void onCurrentHeartrateChanged(quint8 newHeartrate);
+    void onTargetPowerChanged(unsigned int power);
+    void onTargetKpChanged(double kp);
     void onTypeIdentified();
     void onModeChanged(MonarkConnection::MonarkMode newMode);
 
@@ -28,9 +30,8 @@ private:
     MonarkConnection * m_mc;
     QMqttClient m_client;
 
-    QMqttTopicFilter m_currentValuesFilter{"monark/current/#"};
-    QMqttTopicFilter m_targetValuesFilter{"monark/target/#"};
-    QMqttTopicFilter m_deviceValuesFilter{"monark/details/#"};
+    QMqttTopicFilter m_targetValuesFilter{"monark/target/set/#"};
+    QMqttTopicFilter m_deviceValuesFilter{"monark/details/set/#"};
 };
 
 #endif // MQTTCONNECTION_H
