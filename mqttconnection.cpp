@@ -107,7 +107,6 @@ void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqt
 
     if (topic.name() == GEARSHIFT)
     {
-        qDebug() << "GEARSHIFT" << QString::fromLocal8Bit(message);
         if (QString::fromLocal8Bit(message) == "inc")
         {
             m_da->incGear();
