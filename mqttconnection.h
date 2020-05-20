@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMqttClient>
 #include "MonarkConnection.h"
+#include "dbusadaptor.h"
 
 class MqttConnection : public QObject
 {
@@ -11,6 +12,7 @@ class MqttConnection : public QObject
 public:
     explicit MqttConnection(const QString &name,
                             MonarkConnection * mc,
+                            DBusAdaptor * da,
                             QObject *parent = nullptr);
 
 public slots:
@@ -28,6 +30,8 @@ public slots:
 private:
     QString m_name;
     MonarkConnection * m_mc;
+    DBusAdaptor * m_da;
+
     QMqttClient m_client;
 
     QMqttTopicFilter m_targetValuesFilter{"monark/target/set/#"};

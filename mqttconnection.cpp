@@ -18,11 +18,15 @@
 #define CURRENT_CADENCE "monark/current/cadence"
 #define CURRENT_HEARTRATE "monark/current/heartrate"
 
+#define GEARSHIFT "monark/control/gearshift"
+
 MqttConnection::MqttConnection(const QString &name,
                                MonarkConnection *mc,
+                               DBusAdaptor * da,
                                QObject *parent) : QObject(parent),
   m_name(name),
-  m_mc(mc)
+  m_mc(mc),
+  m_da(da)
 {
 
     // Setup connections
@@ -51,6 +55,7 @@ MqttConnection::MqttConnection(const QString &name,
         // Setup subscriptions
         m_client.subscribe(m_targetValuesFilter);
         m_client.subscribe(m_deviceValuesFilter);
+        m_client.subscribe(QMqttTopicFilter("monark/control/gearshift"));
 
     });
 
@@ -97,6 +102,24 @@ void MqttConnection::onMqttMessageReceived(const QByteArray &message, const QMqt
         else if (QString::fromLocal8Bit(message) == "kp")
         {
             m_mc->setMode(MonarkConnection::MONARK_MODE_KP);
+        }
+    }
+
+    if (topic.name() == GEARSHIFT)
+    {
+        qDebug() << "GEARSHIFT" << QString::fromLocal8Bit(message);
+        if (QString::fromLocal8Bit(message) == "inc")
+        {
+            m_da->incGear();
+        } else if (QString::fromLocal8Bit(message) == "inc_lots")
+        {
+            m_da->incGearLots();
+        } else if (QString::fromLocal8Bit(message) == "dec")
+        {
+            m_da->decGear();
+        } else if (QString::fromLocal8Bit(message) == "dec_lots")
+        {
+            m_da->decGearLots();
         }
     }
 }

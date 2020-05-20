@@ -58,7 +58,9 @@ int main(int argc, char *argv[])
 
     GearSimulator *gearSimu = new GearSimulator(monark);
     DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark, gearSimu);
-    MqttConnection *mqttConnection = new MqttConnection(QString("Monark %1").arg(devId), monark);
+    MqttConnection *mqttConnection = new MqttConnection(QString("Monark %1").arg(devId),
+                                                        monark,
+                                                        dbusAdaptor);
 
     Q_UNUSED(dbusAdaptor)
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
