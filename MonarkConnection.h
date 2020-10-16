@@ -46,6 +46,7 @@ public:
 public slots:
     void requestAll();
     void requestPower();
+    void requestKp();
     void requestPulse();
     void requestCadence();
     void sendTargetWattOrKp();
@@ -71,7 +72,7 @@ private:
     QMutex m_mutex;
     unsigned int m_load;
     unsigned int m_loadToWrite;
-    double m_kp;
+    double m_kp, m_readKp;
     double m_kpToWrite;
     QTimer *m_startupTimer;
 
@@ -89,6 +90,7 @@ signals:
     void pulse(quint8);
     void cadence(quint8);
     void power(quint16);
+    void skp(double);
     void connectionStatus(bool connected);
     void modeChanged(MonarkMode mode);
     void typeIdentified();

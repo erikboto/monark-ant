@@ -29,6 +29,7 @@ MonarkConnection::MonarkConnection() :
     m_writeTimer(0),
     m_load(0),
     m_loadToWrite(0),
+    m_readKp(0),
     m_type(MONARK_UNKNOWN),
     m_power(0),
     m_cadence(0),
@@ -118,7 +119,7 @@ void MonarkConnection::requestAll()
         return;
 
     requestPower();
-    requestPulse();
+    requestKp();
     requestCadence();
     m_mutex.unlock();
 
@@ -201,6 +202,23 @@ void MonarkConnection::requestPower()
     QString data = readAnswer(500);
     m_power = data.toInt();
     emit power(m_power);
+}
+
+void MonarkConnection::requestKp()
+{
+    // Always empty read buffer first
+    m_serial->readAll();
+
+    m_serial->write("kp\r");
+    if (!m_serial->waitForBytesWritten(500))
+    {
+        // failure to write to device, bail out
+        emit connectionStatus(false);
+        m_startupTimer->start();
+    }
+    QString data = readAnswer(500);
+    m_readKp = data.toDouble();
+    emit skp(m_readKp);
 }
 
 void MonarkConnection::requestPulse()

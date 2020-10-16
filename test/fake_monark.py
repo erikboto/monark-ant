@@ -29,5 +29,9 @@ while True:
         val = int(250 + random.randint(-10,10))
         s.write(("%s\r" % val).encode('utf-8'))
         print("Sent:", val)
+    if foo.startswith("kp"):
+        val = int(random.randint(0,9))
+        s.write(("3.%s\r" % val).encode('utf-8'))
+        print("Sent:", val)
     time.sleep(0.01)
     #if foo.beginswith("id"):

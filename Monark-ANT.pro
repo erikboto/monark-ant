@@ -24,6 +24,7 @@ raspberry-pi {
 
 SOURCES +=  main.cpp \
             MonarkConnection.cpp \
+            filelogger.cpp \
             mqttconnection.cpp \
             powerdevice.cpp \
             LibUsb.cpp \
@@ -37,6 +38,7 @@ SOURCES +=  main.cpp \
             ftmsdevice.cpp
 
 HEADERS  += MonarkConnection.h \
+            filelogger.h \
             mqttconnection.h \
             powerdevice.h \
             LibUsb.h \

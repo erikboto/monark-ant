@@ -28,6 +28,7 @@
 #include "dbusadaptor.h"
 #include "gearsimulator.h"
 #include "mqttconnection.h"
+#include "filelogger.h"
 
 int main(int argc, char *argv[])
 {
@@ -61,6 +62,7 @@ int main(int argc, char *argv[])
     MqttConnection *mqttConnection = new MqttConnection(QString("Monark %1").arg(devId),
                                                         monark,
                                                         dbusAdaptor);
+    FileLogger *fl = new FileLogger();
 
     Q_UNUSED(dbusAdaptor)
     QDBusConnection::sessionBus().registerObject("/Monark", monark);
@@ -90,6 +92,10 @@ int main(int argc, char *argv[])
 
     QObject::connect(monark, &MonarkConnection::targetKpChanged, mqttConnection, &MqttConnection::onTargetKpChanged);
     QObject::connect(monark, &MonarkConnection::targetPowerChanged, mqttConnection, &MqttConnection::onTargetPowerChanged);
+
+    QObject::connect(monark, &MonarkConnection::skp, fl, &FileLogger::onKp);
+    QObject::connect(monark, &MonarkConnection::power, fl, &FileLogger::onPower);
+    QObject::connect(monark, &MonarkConnection::cadence, fl, &FileLogger::onCadence);
 
     monark->start();
     ant->start();
