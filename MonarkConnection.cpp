@@ -215,19 +215,19 @@ void MonarkConnection::calculatePower()
     auto currCadence = m_cadence;
     auto currKp = m_readKp;
 
-    qDebug() << "Cadence: " << currCadence << " " << prevCadence;
-    qDebug() << "KP: " << currKp << " " << prevKp;
+    //qDebug() << "Cadence: " << currCadence << " " << prevCadence;
+    //qDebug() << "KP: " << currKp << " " << prevKp;
 
     double I = 0.91;
     double pi = 3.14159;
 
-    auto w = [pi](int rpm)->double{
+    auto omega = [pi](int rpm)->double{
         double res = (rpm/60.0f)*2*pi*52/14;
         return res;
     };
 
     double brakePower = (currKp*currCadence+prevKp*prevCadence)*0.98/2.0f;
-    double inertiaPower = (I/2)*(pow(w(currCadence),2)-pow(w(prevCadence),2));
+    double inertiaPower = (I/2)*(pow(omega(currCadence),2)-pow(omega(prevCadence),2));
 
     double totPower = brakePower + inertiaPower;
     if (totPower < 0)
