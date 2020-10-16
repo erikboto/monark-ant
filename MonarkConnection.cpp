@@ -119,9 +119,9 @@ void MonarkConnection::requestAll()
     if (! m_mutex.tryLock())
         return;
 
-    requestPower();
     requestKp();
     requestCadence();
+    calculatePower();
     m_mutex.unlock();
 
     sendTargetWattOrKp();
@@ -215,6 +215,9 @@ void MonarkConnection::calculatePower()
     auto currCadence = m_cadence;
     auto currKp = m_readKp;
 
+    qDebug() << "Cadence: " << currCadence << " " << prevCadence;
+    qDebug() << "KP: " << currKp << " " << prevKp;
+
     double I = 0.91;
     double pi = 3.14159;
 
@@ -223,7 +226,7 @@ void MonarkConnection::calculatePower()
         return res;
     };
 
-    double brakePower = currKp*currCadence+prevKp*prevCadence*0.98/2.0f;
+    double brakePower = (currKp*currCadence+prevKp*prevCadence)*0.98/2.0f;
     double inertiaPower = (I/2)*(pow(w(currCadence),2)-pow(w(prevCadence),2));
 
     double totPower = brakePower + inertiaPower;
@@ -239,6 +242,7 @@ void MonarkConnection::calculatePower()
     prevCadence = m_cadence;
     prevKp = m_readKp;
 
+    qDebug() << "Current power: " << calculatedPower;
     emit power(calculatedPower);
 }
 
