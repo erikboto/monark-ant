@@ -46,6 +46,7 @@ public:
 public slots:
     void requestAll();
     void requestPower();
+    void calculatePower();
     void requestKp();
     void requestPulse();
     void requestCadence();

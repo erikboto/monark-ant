@@ -27,7 +27,6 @@
 #include <QDBusConnection>
 #include "dbusadaptor.h"
 #include "gearsimulator.h"
-#include "mqttconnection.h"
 #include "filelogger.h"
 
 int main(int argc, char *argv[])
@@ -59,9 +58,6 @@ int main(int argc, char *argv[])
 
     GearSimulator *gearSimu = new GearSimulator(monark);
     DBusAdaptor *dbusAdaptor = new DBusAdaptor(monark, gearSimu);
-    MqttConnection *mqttConnection = new MqttConnection(QString("Monark %1").arg(devId),
-                                                        monark,
-                                                        dbusAdaptor);
     FileLogger *fl = new FileLogger();
 
     Q_UNUSED(dbusAdaptor)
@@ -90,8 +86,6 @@ int main(int argc, char *argv[])
     QObject::connect(ftmsDevice, &FTMSDevice::newGrade, gearSimu, &GearSimulator::onGradeChanged);
     QObject::connect(ftmsDevice, &FTMSDevice::simulationModeChanged, monark, &MonarkConnection::setFecMode);
 
-    QObject::connect(monark, &MonarkConnection::targetKpChanged, mqttConnection, &MqttConnection::onTargetKpChanged);
-    QObject::connect(monark, &MonarkConnection::targetPowerChanged, mqttConnection, &MqttConnection::onTargetPowerChanged);
 
     QObject::connect(monark, &MonarkConnection::skp, fl, &FileLogger::onKp);
     QObject::connect(monark, &MonarkConnection::power, fl, &FileLogger::onPower);

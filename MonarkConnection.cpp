@@ -21,6 +21,7 @@
 #include <QByteArray>
 #include <QDebug>
 #include <QtSerialPort/QSerialPortInfo>
+#include <cmath>
 
 MonarkConnection::MonarkConnection() :
     m_serial(0),
@@ -202,6 +203,43 @@ void MonarkConnection::requestPower()
     QString data = readAnswer(500);
     m_power = data.toInt();
     emit power(m_power);
+}
+
+void MonarkConnection::calculatePower()
+{
+    static quint8 prevCadence = 0;
+    static double prevKp = 0;
+
+    quint16 calculatedPower = 0;
+
+    auto currCadence = m_cadence;
+    auto currKp = m_readKp;
+
+    double I = 0.91;
+    double pi = 3.14159;
+
+    auto w = [pi](int rpm)->double{
+        double res = (rpm/60.0f)*2*pi*52/14;
+        return res;
+    };
+
+    double brakePower = currKp*currCadence+prevKp*prevCadence*0.98/2.0f;
+    double inertiaPower = (I/2)*(pow(w(currCadence),2)-pow(w(prevCadence),2));
+
+    double totPower = brakePower + inertiaPower;
+    if (totPower < 0)
+        totPower = 0;
+
+    calculatedPower = totPower;
+
+    //I = 0.91;
+    //retval = (newrpm*newkp+oldrpm*oldkp)*0.98/2+(I/2)*(w(newrpm)^2-w(oldrpm)^2);
+
+    // Update values for next time
+    prevCadence = m_cadence;
+    prevKp = m_readKp;
+
+    emit power(calculatedPower);
 }
 
 void MonarkConnection::requestKp()
