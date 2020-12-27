@@ -28,6 +28,7 @@
 #include "dbusadaptor.h"
 #include "gearsimulator.h"
 #include "mqttconnection.h"
+#include <QFile>
 
 int main(int argc, char *argv[])
 {
@@ -90,6 +91,15 @@ int main(int argc, char *argv[])
 
     QObject::connect(monark, &MonarkConnection::targetKpChanged, mqttConnection, &MqttConnection::onTargetKpChanged);
     QObject::connect(monark, &MonarkConnection::targetPowerChanged, mqttConnection, &MqttConnection::onTargetPowerChanged);
+
+    // Control the status led on Raspberry Pi
+    QObject::connect(monark, &MonarkConnection::connectionStatus, [](bool connected){
+        QFile led("/sys/class/leds/led0/brightness");
+        if ( led.open(QIODevice::WriteOnly) )
+        {
+            led.write(connected ? "1" : "0");
+        }
+    });
 
     monark->start();
     ant->start();
