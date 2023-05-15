@@ -304,10 +304,10 @@ void MonarkConnection::configurePort(QSerialPort *serialPort)
     {
         qFatal("Trying to configure null port, start debugging.");
     }
-    serialPort->setBaudRate(QSerialPort::Baud4800);
+    serialPort->setBaudRate(QSerialPort::Baud115200);
     serialPort->setDataBits(QSerialPort::Data8);
     serialPort->setStopBits(QSerialPort::OneStop);
-    serialPort->setFlowControl(QSerialPort::SoftwareControl);
+    serialPort->setFlowControl(QSerialPort::NoFlowControl);
     serialPort->setParity(QSerialPort::NoParity);
 
     // Send empty \r after configuring port, otherwise first command might not
